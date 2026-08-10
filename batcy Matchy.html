@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BATCY // Chat Matchmaker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-0: #050308;
+      --bg-1: #0c0714;
+      --panel: #120a1f;
+      --pink: #a855f7;
+      --pink-soft: #c9a3ff;
+      --violet: #7c2bf5;
+      --violet-soft: #b48bff;
+      --cyan: #c084fc;
+      --gold: #e9d5ff;
+      --ink: #f2e9ff;
+      --ink-dim: #9483b8;
+      --line: rgba(180, 139, 255, 0.14);
+      --danger: #ff4d4d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 50% 30%, rgba(168, 85, 247, 0.22), transparent 45%),
+        radial-gradient(circle at 15% 8%, rgba(124, 43, 245, 0.28), transparent 40%),
+        radial-gradient(circle at 85% 92%, rgba(124, 43, 245, 0.22), transparent 45%),
+        var(--bg-0);
+      color: var(--ink);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .pixel {
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    /* ---------- follow marquee (kick-style scrolling band) ---------- */
+    .follow-marquee {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .follow-marquee .lane {
+      position: absolute;
+      left: -20%;
+      width: 140%;
+      display: flex;
+      white-space: nowrap;
+      transform: rotate(-8deg);
+      opacity: 0.07;
+    }
+
+    .follow-marquee .lane span {
+      font-family: 'Rubik', 'Space Grotesk', sans-serif;
+      font-weight: 900;
+      font-size: clamp(28px, 5.4vw, 58px);
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      opacity: 0.5;
+      padding: 0 28px;
+      text-transform: uppercase;
+    }
+
+    .follow-marquee .lane.a {
+      top: 10%;
+      animation: marqueeScroll 42s linear infinite;
+    }
+
+    .follow-marquee .lane.b {
+      top: 38%;
+      animation: marqueeScroll 34s linear infinite reverse;
+      opacity: 0.05;
+    }
+
+    .follow-marquee .lane.c {
+      top: 66%;
+      animation: marqueeScroll 50s linear infinite;
+    }
+
+    .follow-marquee .lane.d {
+      top: 90%;
+      animation: marqueeScroll 38s linear infinite reverse;
+      opacity: 0.05;
+    }
+
+    @keyframes marqueeScroll {
+      from {
+        transform: rotate(-8deg) translateX(0);
+      }
+
+      to {
+        transform: rotate(-8deg) translateX(-50%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .follow-marquee .lane {
+        animation: none !important;
+      }
+    }
+
+    /* ---------- background canvas + scanlines ---------- */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: repeating-linear-gradient(to bottom,
+          rgba(255, 255, 255, 0.035) 0px,
+          rgba(255, 255, 255, 0.035) 1px,
+          transparent 2px,
+          transparent 3px);
+      mix-blend-mode: overlay;
+      opacity: .5;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      box-shadow: inset 0 0 18vw rgba(0, 0, 0, 0.75);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 18px 70px;
+    }
+
+    /* ---------- header ---------- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, var(--violet), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12), 0 0 22px rgba(168, 85, 247, 0.55);
+      flex-shrink: 0;
+    }
+
+    .brand-mark svg {
+      width: 24px;
+      height: 24px;
+      fill: #0a0512;
+      filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
+    }
+
+    .brand-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 15px;
+      letter-spacing: 1px;
+      color: var(--ink);
+      text-shadow:
+        0 0 6px rgba(168, 85, 247, 0.9),
+        0 0 18px rgba(124, 43, 245, 0.7);
+      animation: flicker 4.4s infinite steps(1);
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--ink-dim);
+      margin-top: 3px;
+      letter-spacing: .4px;
+    }
+
+    @keyframes flicker {
+
+      0%,
+      3%,
+      6%,
+      100% {
+        opacity: 1;
+      }
+
+      4% {
+        opacity: .55;
+      }
+
+      5% {
+        opacity: 1;
+      }
+
+      41% {
+        opacity: 1;
+      }
+
+      42% {
+        opacity: .7;
+      }
+
+      43% {
+        opacity: 1;
+      }
+    }
+
+    .status-social {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 11px;
+      letter-spacing: .5px;
+      cursor: pointer;
+      transition: .2s ease;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .live-pill:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #5a5a66;
+      flex-shrink: 0;
+    }
+
+    .dot.on {
+      background: #a855f7;
+      box-shadow: 0 0 8px #a855f7, 0 0 16px #a855f7;
+      animation: pulse 1.3s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.35);
+        opacity: .6;
+      }
+    }
+
+    .socials {
+      display: flex;
+      gap: 8px;
+    }
+
+    .social-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--ink-dim);
+      text-decoration: none;
+      transition: .2s ease;
+    }
+
+    .social-btn:hover {
+      color: var(--ink);
+      border-color: var(--pink);
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .social-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .sfx-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 20;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(10, 6, 20, 0.65);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--ink);
+      transition: .2s ease;
+    }
+
+    .sfx-toggle:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px rgba(192, 132, 252, 0.4);
+    }
+
+    .sfx-toggle svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    /* ---------- hero ---------- */
+    .hero {
+      text-align: center;
+      padding: 34px 10px 8px;
+      position: relative;
+    }
+
+    .hero-sticker {
+      position: absolute;
+      top: -6px;
+      right: clamp(4px, 6vw, 60px);
+      width: clamp(64px, 9vw, 96px);
+      height: auto;
+      filter: drop-shadow(0 10px 20px rgba(168, 85, 247, 0.4));
+      animation: heroStickerBob 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes heroStickerBob {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-4deg);
+      }
+
+      50% {
+        transform: translateY(-10px) rotate(3deg);
+      }
+    }
+
+    @media (max-width:720px) {
+      .hero-sticker {
+        display: none;
+      }
+    }
+
+    .hero-eyebrow {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(192, 132, 252, 0.7);
+    }
+
+    .hero-bat {
+      width: 46px;
+      height: auto;
+      margin: 14px auto 0;
+      display: block;
+      fill: var(--violet-soft);
+      filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.7));
+      animation: batflap 3.6s ease-in-out infinite;
+    }
+
+    @keyframes batflap {
+
+      0%,
+      100% {
+        transform: scaleY(1) rotate(0deg);
+      }
+
+      50% {
+        transform: scaleY(0.82) rotate(-2deg);
+      }
+    }
+
+    .hero h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(26px, 6vw, 46px);
+      margin: 10px 0 10px;
+      line-height: 1.35;
+      background: linear-gradient(90deg, var(--pink) 0%, var(--violet-soft) 55%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 18px rgba(168, 85, 247, 0.35));
+    }
+
+    .hero p {
+      color: var(--ink-dim);
+      font-size: 14.5px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ---------- mode tabs ---------- */
+    .mode-tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .mode-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 12.5px;
+      color: var(--ink-dim);
+      letter-spacing: .3px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .mode-tab-ico {
+      font-size: 15px;
+    }
+
+    .mode-tab:hover {
+      color: var(--ink);
+      border-color: rgba(180, 139, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .mode-tab.active {
+      color: var(--ink);
+      border-color: var(--pink);
+      background: linear-gradient(145deg, rgba(168, 85, 247, 0.18), rgba(124, 43, 245, 0.1));
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    /* ---------- game card ---------- */
+    .mode-panel {
+      display: none;
+    }
+
+    .mode-panel.active {
+      display: block;
+    }
+
+    .card {
+      margin-top: 34px;
+      background: linear-gradient(180deg, rgba(20, 12, 36, 0.9), rgba(15, 9, 27, 0.9));
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 30px clamp(16px, 4vw, 40px) 34px;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(168, 85, 247, 0.12),
+        0 30px 60px -25px rgba(124, 43, 245, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 20px;
+      padding: 1px;
+      background: linear-gradient(120deg, var(--pink), transparent 30%, transparent 70%, var(--violet));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .card-bat {
+      display: block;
+      width: 100px;
+      height: auto;
+      margin: -8px auto 4px;
+      fill: var(--violet-soft);
+      filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6));
+      opacity: .85;
+    }
+
+    .card-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(14px, 3vw, 19px);
+      text-align: center;
+      letter-spacing: 1px;
+      color: var(--ink);
+      margin: 0 0 6px;
+    }
+
+    .card-title span {
+      color: var(--pink);
+      text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+    }
+
+    .card-sub {
+      text-align: center;
+      color: var(--ink-dim);
+      font-size: 12.5px;
+      margin-bottom: 28px;
+    }
+
+    .matchup {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    @media (max-width:560px) {
+      .matchup {
+        grid-template-columns: 1fr;
+      }
+
+      .vs-wrap {
+        margin: 6px auto;
+        transform: rotate(90deg);
+      }
+    }
+
+    .slot {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      transition: .2s ease;
+    }
+
+    .slot label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--ink-dim);
+      margin-bottom: 9px;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    .slot.p1 {
+      border-color: rgba(168, 85, 247, 0.35);
+    }
+
+    .slot.p2 {
+      border-color: rgba(124, 43, 245, 0.4);
+    }
+
+    .slot:focus-within.p1 {
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18), 0 0 22px rgba(168, 85, 247, 0.35);
+      border-color: var(--pink);
+    }
+
+    .slot:focus-within.p2 {
+      box-shadow: 0 0 0 3px rgba(124, 43, 245, 0.2), 0 0 22px rgba(124, 43, 245, 0.4);
+      border-color: var(--violet-soft);
+    }
+
+    .slot input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--ink);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 4px 2px;
+    }
+
+    .slot input::placeholder {
+      color: #5a5170;
+      font-weight: 500;
+    }
+
+    .avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: #0a0512;
+    }
+
+    .slot.p1 .avatar {
+      background: linear-gradient(145deg, var(--pink), var(--pink-soft));
+    }
+
+    .slot.p2 .avatar {
+      background: linear-gradient(145deg, var(--violet), var(--violet-soft));
+    }
+
+    .avatar-hint {
+      font-size: 10.5px;
+      color: var(--ink-dim);
+    }
+
+    .vs-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+
+    .vs-bolt {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 19px;
+      color: var(--violet-soft);
+      text-shadow: 0 0 12px rgba(180, 139, 255, 0.85), 0 0 24px rgba(168, 85, 247, 0.5);
+      animation: vsspin 3.2s ease-in-out infinite;
+    }
+
+    @keyframes vsspin {
+
+      0%,
+      100% {
+        transform: scale(1) rotate(0deg);
+      }
+
+      50% {
+        transform: scale(1.16) rotate(-6deg);
+      }
+    }
+
+    .beam {
+      position: absolute;
+      top: 50%;
+      left: -140px;
+      right: -140px;
+      height: 3px;
+      transform: translateY(-50%) scaleX(0);
+      background: linear-gradient(90deg, transparent, var(--pink), var(--cyan), var(--violet), transparent);
+      opacity: 0;
+      filter: blur(0.3px) drop-shadow(0 0 8px var(--pink));
+      transform-origin: center;
+      pointer-events: none;
+    }
+
+    .beam.firing {
+      animation: beamfire 1.15s ease-out;
+    }
+
+    @keyframes beamfire {
+      0% {
+        opacity: 0;
+        transform: translateY(-50%) scaleX(0);
+      }
+
+      18% {
+        opacity: 1;
+        transform: translateY(-50%) scaleX(1);
+      }
+
+      75% {
+        opacity: 1;
+        transform: translateY(-50%) scaleX(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-50%) scaleX(1.05);
+      }
+    }
+
+    .cta-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .match-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(12px, 2.4vw, 15px);
+      letter-spacing: 1px;
+      color: #0a0512;
+      background: linear-gradient(120deg, var(--gold), var(--pink) 55%, var(--violet-soft));
+      background-size: 220% 220%;
+      border: none;
+      border-radius: 14px;
+      padding: 17px 34px;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 12px 0 0 #4a1580, 0 16px 30px -8px rgba(168, 85, 247, 0.55);
+      transition: transform .12s ease, box-shadow .12s ease, background-position .6s ease;
+      animation: btnglow 3.4s ease-in-out infinite;
+    }
+
+    @keyframes btnglow {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .match-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .match-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 6px 0 0 #4a1580, 0 8px 18px -8px rgba(168, 85, 247, 0.6);
+    }
+
+    .match-btn:disabled {
+      filter: grayscale(.4) brightness(.75);
+      cursor: not-allowed;
+      animation: none;
+    }
+
+    .match-btn .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.55);
+      transform: scale(0);
+      animation: rip .6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes rip {
+      to {
+        transform: scale(3.2);
+        opacity: 0;
+      }
+    }
+
+    /* ---------- result ---------- */
+    .result {
+      margin-top: 6px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .5s ease, opacity .4s ease .1s, margin-top .5s ease;
+    }
+
+    .result.show {
+      max-height: 900px;
+      opacity: 1;
+      margin-top: 30px;
+    }
+
+    .result-inner {
+      border-top: 1px dashed var(--line);
+      padding-top: 26px;
+      text-align: center;
+    }
+
+    .result-sticker {
+      width: 130px;
+      height: auto;
+      margin: 0 auto 10px;
+      display: block;
+      filter: drop-shadow(0 10px 22px rgba(168, 85, 247, 0.45));
+      animation: stickerPop .5s cubic-bezier(.2, 1.4, .4, 1);
+    }
+
+    @keyframes stickerPop {
+      0% {
+        transform: scale(0) rotate(-14deg);
+        opacity: 0;
+      }
+
+      70% {
+        transform: scale(1.12) rotate(3deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    .ship-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(15px, 3.4vw, 20px);
+      color: var(--ink);
+      text-shadow: 0 0 14px rgba(168, 85, 247, 0.55);
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+
+    .score-reel {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(46px, 12vw, 78px);
+      line-height: 1;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(233, 213, 255, 0.55), 0 0 46px rgba(168, 85, 247, 0.45);
+      margin: 6px 0 4px;
+    }
+
+    .score-reel::after {
+      content: "%";
+      font-size: 0.45em;
+      vertical-align: top;
+      margin-left: 4px;
+      color: var(--pink-soft);
+    }
+
+    .meter {
+      width: min(420px, 90%);
+      height: 14px;
+      margin: 14px auto 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--pink), var(--gold));
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+      transition: width 1s cubic-bezier(.2, .9, .25, 1);
+    }
+
+    .status-msg {
+      font-size: clamp(17px, 3.6vw, 22px);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .status-desc {
+      color: var(--ink-dim);
+      font-size: 13.5px;
+      max-width: 460px;
+      margin: 0 auto 24px;
+    }
+
+    .again-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 11px 20px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .again-btn:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 14px rgba(192, 132, 252, 0.35);
+    }
+
+    .ghost-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--ink-dim);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 8px 13px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .ghost-btn:hover {
+      color: var(--ink);
+      border-color: var(--violet-soft);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+    }
+
+    /* ---------- roulette wheel ---------- */
+    .wheel-subtabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .wheel-subtab {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--ink-dim);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .wheel-subtab:hover {
+      color: var(--ink);
+      border-color: rgba(180, 139, 255, 0.4);
+    }
+
+    .wheel-subtab.active {
+      color: var(--ink);
+      border-color: var(--pink);
+      background: rgba(168, 85, 247, 0.14);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .wheel-instance {
+      display: none;
+    }
+
+    .wheel-instance.active {
+      display: block;
+    }
+
+    .wheel-instance[data-accent="pink"] .wheel-hub {
+      background: radial-gradient(circle at 35% 30%, var(--pink-soft), var(--pink) 60%, #5c1a8a);
+    }
+
+    .wheel-instance[data-accent="gold"] .wheel-hub {
+      background: radial-gradient(circle at 35% 30%, #fff6de, var(--gold) 60%, #8a6f2a);
+    }
+
+    .wheel-layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 30px;
+      align-items: start;
+      justify-items: center;
+    }
+
+    @media (max-width:640px) {
+      .wheel-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wheel-stage {
+      position: relative;
+      width: min(360px, 80vw);
+      flex-shrink: 0;
+    }
+
+    .wheel-stage canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 8px 30px rgba(124, 43, 245, 0.45));
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 26px;
+      color: var(--gold);
+      z-index: 3;
+      text-shadow: 0 0 10px rgba(233, 213, 255, 0.8);
+    }
+
+    .wheel-hub {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--violet-soft), var(--violet) 60%, #3a0e6b);
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      cursor: pointer;
+      z-index: 3;
+      box-shadow: 0 0 0 4px rgba(5, 3, 8, 0.9), 0 0 24px rgba(168, 85, 247, 0.7);
+      transition: transform .15s ease;
+    }
+
+    .wheel-hub:hover {
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+
+    .wheel-hub:active {
+      transform: translate(-50%, -50%) scale(0.94);
+    }
+
+    .wheel-hub:disabled {
+      filter: grayscale(.5) brightness(.7);
+      cursor: not-allowed;
+    }
+
+    .wheel-side {
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .wheel-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--ink-dim);
+      margin-bottom: 9px;
+    }
+
+    .wheelNames {
+      width: 100%;
+      resize: vertical;
+      min-height: 130px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      padding: 12px;
+      outline: none;
+    }
+
+    .wheelNames:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
+    }
+
+    .wheel-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .wheel-count {
+      margin-top: 8px;
+      font-size: 11.5px;
+      color: var(--ink-dim);
+    }
+
+    /* ---------- rate my chat ---------- */
+    .rate-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-top: 6px;
+    }
+
+    .rate-toggle {
+      display: flex;
+      gap: 10px;
+    }
+
+    .rate-mode-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      letter-spacing: .5px;
+      color: var(--ink-dim);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .rate-mode-btn:hover {
+      color: var(--ink);
+      border-color: rgba(180, 139, 255, 0.4);
+    }
+
+    .rate-mode-btn.active {
+      color: #0a0512;
+      background: linear-gradient(120deg, var(--gold), var(--violet-soft));
+      border-color: transparent;
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    /* ---------- bat fortune / tarot ---------- */
+    .tarot-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 6px 0 6px;
+    }
+
+    .tarot-card {
+      width: 74px;
+      height: 110px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      background: linear-gradient(155deg, #1c1030, #0e081b);
+      border: 1px solid rgba(180, 139, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .tarot-card::after {
+      content: "🦇";
+      opacity: .55;
+      filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.6));
+    }
+
+    .tarot-card:hover {
+      transform: translateY(-6px) rotate(-2deg);
+      border-color: var(--pink);
+      box-shadow: 0 14px 26px -10px rgba(168, 85, 247, 0.55);
+    }
+
+    .tarot-card.picked {
+      opacity: .25;
+      pointer-events: none;
+      transform: none;
+    }
+
+    .tarot-big {
+      font-size: 26px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 0 18px rgba(168, 85, 247, 0.6));
+      animation: batflap 2.4s ease-in-out infinite;
+    }
+
+    /* ---------- history log ---------- */
+    .history-section {
+      margin-top: 40px;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .history-title {
+      font-size: 12px;
+      color: var(--ink-dim);
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .history-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--ink-dim);
+      font-size: 12.5px;
+      text-align: center;
+      padding: 18px 0;
+    }
+
+    .history-empty-sticker {
+      width: 70px;
+      height: auto;
+      margin-bottom: 8px;
+      opacity: 0.85;
+      filter: drop-shadow(0 6px 14px rgba(168, 85, 247, 0.35));
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 13px;
+      font-size: 12.5px;
+      color: var(--ink-dim);
+      animation: histIn .3s ease;
+    }
+
+    @keyframes histIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .history-item .h-ico {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .history-item .h-text {
+      flex: 1;
+      color: var(--ink);
+    }
+
+    .history-item .h-time {
+      font-size: 10.5px;
+      color: var(--ink-dim);
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: var(--ink-dim);
+      font-size: 11.5px;
+      letter-spacing: .3px;
+    }
+
+    footer b {
+      color: var(--pink-soft);
+    }
+
+    .footer-sticker {
+      display: block;
+      width: 64px;
+      height: auto;
+      margin: 0 auto 10px;
+      opacity: 0.9;
+      filter: drop-shadow(0 6px 14px rgba(168, 85, 247, 0.35));
+    }
+
+    #fxCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="follow-marquee" id="followMarquee" aria-hidden="true"></div>
+
+  <canvas id="bgCanvas"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <canvas id="fxCanvas"></canvas>
+
+  <div class="sfx-toggle" id="sfxToggle" title="Toggle sound">
+    <svg id="sfxIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+      <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+      <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+    </svg>
+    <svg id="sfxIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+      <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+      <path d="M23 9l-6 6M17 9l6 6" />
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2c.6 1.1 1 2.1 1.1 3.1 2.6-1.7 5.4-2.4 8.4-2.1-1.4 1.3-2.2 2.6-2.6 4.1 1.9.9 3 2.3 3.1 4.4-1.6-.7-3-.9-4.4-.6.6 1.7-.1 3.2-1.4 4.5-.4-1.3-1-2.2-1.9-2.8.2 1.7-.3 3.1-1.5 4.3l-.7-2-.7 2c-1.2-1.2-1.7-2.6-1.5-4.3-.9.6-1.5 1.5-1.9 2.8-1.3-1.3-2-2.8-1.4-4.5-1.4-.3-2.8-.1-4.4.6.1-2.1 1.2-3.5 3.1-4.4-.4-1.5-1.2-2.8-2.6-4.1 3-.3 5.8.4 8.4 2.1C11 4.1 11.4 3.1 12 2Z" />
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">BATCY MATCHY</div>
+          <div class="brand-sub">chaos gremlin &middot; variety streamer</div>
+        </div>
+      </div>
+      <div class="status-social">
+        <a class="live-pill" id="livePill" href="https://kick.com/damnbatcy" target="_blank" rel="noopener">
+          <span class="dot" id="liveDot"></span>
+          <span id="liveText">OFFLINE</span>
+        </a>
+        <div class="socials">
+          <a class="social-btn" href="https://kick.com/damnbatcy" target="_blank" rel="noopener" title="Kick">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 2h6v6.2L13.5 2H21l-9 9 9 11h-7.6l-5.4-7.4V22H2Z" />
+            </svg>
+          </a>
+          <a class="social-btn" href="https://twitter.com/damnbatcy" target="_blank" rel="noopener" title="X / Twitter">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M18.9 2H22l-7.6 8.7L23.3 22h-7.1l-5.6-7.3L4.1 22H1l8.2-9.3L1 2h7.3l5.1 6.7L18.9 2Zm-1.2 18h1.9L7.4 3.9H5.3L17.7 20Z" />
+            </svg>
+          </a>
+          <a class="social-btn" href="https://tiktok.com/@damn.batcy" target="_blank" rel="noopener" title="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M14 2h3.2c.3 1.8 1.5 3.3 3.3 3.8v3.2c-1.6 0-3-.5-4.2-1.4v6.9c0 3.6-2.9 6.5-6.5 6.5S3.3 17.1 3.3 13.5 6.2 7 9.8 7c.4 0 .8 0 1.2.1v3.3c-.4-.1-.8-.2-1.2-.2-1.8 0-3.2 1.4-3.2 3.2s1.4 3.2 3.2 3.2 3.3-1.4 3.3-3.2V2Z" />
+            </svg>
+          </a>
+          <a class="social-btn" href="https://discord.gg/nVYjjcUVHK" target="_blank" rel="noopener" title="Discord">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M20.3 5.4A17.6 17.6 0 0 0 15.9 4l-.3.6a13 13 0 0 1 3.7 1.4 15.8 15.8 0 0 0-13.8 0A13 13 0 0 1 9.2 4.6L8.9 4a17.6 17.6 0 0 0-4.4 1.4C1.9 9 1.2 12.6 1.5 16.1a17.7 17.7 0 0 0 5.3 2.6l.8-1.3a11 11 0 0 1-1.9-.9l.5-.4c3.6 1.7 7.6 1.7 11.2 0l.5.4c-.6.4-1.2.7-1.9.9l.8 1.3a17.6 17.6 0 0 0 5.3-2.6c.4-4-.7-7.6-2.8-10.7ZM8.7 14.2c-1 0-1.9-.9-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Zm6.6 0c-1 0-1.9-.9-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-eyebrow pixel">PRESS START</div>
+      <svg class="hero-bat" viewBox="0 0 24 24">
+        <path
+          d="M12 2c.6 1.1 1 2.1 1.1 3.1 2.6-1.7 5.4-2.4 8.4-2.1-1.4 1.3-2.2 2.6-2.6 4.1 1.9.9 3 2.3 3.1 4.4-1.6-.7-3-.9-4.4-.6.6 1.7-.1 3.2-1.4 4.5-.4-1.3-1-2.2-1.9-2.8.2 1.7-.3 3.1-1.5 4.3l-.7-2-.7 2c-1.2-1.2-1.7-2.6-1.5-4.3-.9.6-1.5 1.5-1.9 2.8-1.3-1.3-2-2.8-1.4-4.5-1.4-.3-2.8-.1-4.4.6.1-2.1 1.2-3.5 3.1-4.4-.4-1.5-1.2-2.8-2.6-4.1 3-.3 5.8.4 8.4 2.1C11 4.1 11.4 3.1 12 2Z" />
+      </svg>
+      <h1>THE BAT CAVE<br>OF CHAOS</h1>
+      <p>Four ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
+      <img class="hero-sticker" src="stickers/hi-removebg-preview.png" alt="Batcy waving hi" loading="lazy">
+    </section>
+
+    <div class="mode-tabs" id="modeTabs" role="tablist">
+      <button class="mode-tab active" data-mode="match" role="tab" aria-selected="true">
+        <span class="mode-tab-ico">🦇</span><span>Matchmaker</span>
+      </button>
+      <button class="mode-tab" data-mode="wheel" role="tab" aria-selected="false">
+        <span class="mode-tab-ico">🎡</span><span>Roulette</span>
+      </button>
+      <button class="mode-tab" data-mode="rate" role="tab" aria-selected="false">
+        <span class="mode-tab-ico">🔥</span><span>Rate My Chat</span>
+      </button>
+      <button class="mode-tab" data-mode="fortune" role="tab" aria-selected="false">
+        <span class="mode-tab-ico">🃏</span><span>Bat Fortune</span>
+      </button>
+    </div>
+
+    <div class="card mode-panel active" id="panel-match">
+      <div class="beam" id="beam"></div>
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">ROUND <span>1</span> &mdash; FIND THE SPARK</h2>
+      <p class="card-sub">Type two usernames from chat and see what the bat-o-meter says</p>
+
+      <div class="matchup">
+        <div class="slot p1">
+          <label class="pixel">PLAYER ONE</label>
+          <input id="name1" type="text" maxlength="20" placeholder="e.g. xX_PogChamp_Xx" autocomplete="off">
+          <div class="avatar-row">
+            <div class="avatar" id="ava1">?</div>
+            <div class="avatar-hint">chat participant</div>
+          </div>
+        </div>
+
+        <div class="vs-wrap">
+          <div class="vs-bolt">VS</div>
+        </div>
+
+        <div class="slot p2">
+          <label class="pixel">PLAYER TWO</label>
+          <input id="name2" type="text" maxlength="20" placeholder="e.g. lurker_supreme" autocomplete="off">
+          <div class="avatar-row">
+            <div class="avatar" id="ava2">?</div>
+            <div class="avatar-hint">chat participant</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="match-btn" id="matchBtn">MATCH 'EM UP! 🦇</button>
+      </div>
+
+      <div class="result" id="result">
+        <div class="result-inner">
+          <img class="result-sticker" id="matchSticker" src="stickers/hype-removebg-preview.png" alt="" loading="lazy">
+          <div class="ship-name" id="shipName">???</div>
+          <div class="score-reel" id="scoreReel">00</div>
+          <div class="meter">
+            <div class="meter-fill" id="meterFill"></div>
+          </div>
+          <div class="status-msg" id="statusMsg">&nbsp;</div>
+          <div class="status-desc" id="statusDesc">&nbsp;</div>
+          <button class="again-btn" id="againBtn">🔁 Run It Back</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mode-panel" id="panel-wheel">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">SUMMON THE <span>WHEEL</span></h2>
+      <p class="card-sub">Drop chat names in, spin the roost, one bat gets picked</p>
+
+      <div class="wheel-subtabs" id="wheelSubtabs" role="tablist">
+        <button class="wheel-subtab active" data-wheel="girls" role="tab" aria-selected="true">💜 Girls</button>
+        <button class="wheel-subtab" data-wheel="boys" role="tab" aria-selected="false">💙 Boys</button>
+        <button class="wheel-subtab" data-wheel="mixed" role="tab" aria-selected="false">🦇 Mixed</button>
+      </div>
+
+      <div class="wheel-instance active" id="wheel-girls" data-accent="pink">
+        <div class="wheel-layout">
+          <div class="wheel-stage">
+            <div class="wheel-pointer">▼</div>
+            <canvas class="wheelCanvas" width="360" height="360"></canvas>
+            <button class="wheel-hub spinBtn" title="Spin!">SPIN</button>
+          </div>
+          <div class="wheel-side">
+            <label class="pixel wheel-label">GIRLS IN CHAT</label>
+            <textarea class="wheelNames" rows="7"
+              placeholder="One name per line...&#10;luna_bee&#10;xx_starr&#10;moonlit_kay"></textarea>
+            <div class="wheel-controls">
+              <button class="ghost-btn wheelAddSample">+ Sample names</button>
+              <button class="ghost-btn wheelClear">Clear</button>
+            </div>
+            <div class="wheel-count">0 names loaded</div>
+          </div>
+        </div>
+        <div class="result wheelResult">
+          <div class="result-inner">
+            <img class="result-sticker wheelSticker" src="stickers/gg-removebg-preview.png" alt="" loading="lazy">
+            <div class="ship-name">THE BAT HAS CHOSEN</div>
+            <div class="ship-name wheelWinner"
+              style="font-size:clamp(20px,4.6vw,30px); color:var(--gold); text-shadow:0 0 20px rgba(233,213,255,.6);">
+              ???</div>
+            <button class="again-btn wheelAgainBtn">🔁 Spin Again</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wheel-instance" id="wheel-boys" data-accent="violet">
+        <div class="wheel-layout">
+          <div class="wheel-stage">
+            <div class="wheel-pointer">▼</div>
+            <canvas class="wheelCanvas" width="360" height="360"></canvas>
+            <button class="wheel-hub spinBtn" title="Spin!">SPIN</button>
+          </div>
+          <div class="wheel-side">
+            <label class="pixel wheel-label">BOYS IN CHAT</label>
+            <textarea class="wheelNames" rows="7"
+              placeholder="One name per line...&#10;xX_PogChamp_Xx&#10;lurker_supreme&#10;bat_enjoyer42"></textarea>
+            <div class="wheel-controls">
+              <button class="ghost-btn wheelAddSample">+ Sample names</button>
+              <button class="ghost-btn wheelClear">Clear</button>
+            </div>
+            <div class="wheel-count">0 names loaded</div>
+          </div>
+        </div>
+        <div class="result wheelResult">
+          <div class="result-inner">
+            <img class="result-sticker wheelSticker" src="stickers/gg-removebg-preview.png" alt="" loading="lazy">
+            <div class="ship-name">THE BAT HAS CHOSEN</div>
+            <div class="ship-name wheelWinner"
+              style="font-size:clamp(20px,4.6vw,30px); color:var(--gold); text-shadow:0 0 20px rgba(233,213,255,.6);">
+              ???</div>
+            <button class="again-btn wheelAgainBtn">🔁 Spin Again</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wheel-instance" id="wheel-mixed" data-accent="gold">
+        <div class="wheel-layout">
+          <div class="wheel-stage">
+            <div class="wheel-pointer">▼</div>
+            <canvas class="wheelCanvas" width="360" height="360"></canvas>
+            <button class="wheel-hub spinBtn" title="Spin!">SPIN</button>
+          </div>
+          <div class="wheel-side">
+            <label class="pixel wheel-label">EVERYONE IN CHAT</label>
+            <textarea class="wheelNames" rows="7"
+              placeholder="One name per line...&#10;anyone_chat&#10;random_lurker&#10;bat_squad_99"></textarea>
+            <div class="wheel-controls">
+              <button class="ghost-btn wheelAddSample">+ Sample names</button>
+              <button class="ghost-btn wheelClear">Clear</button>
+            </div>
+            <div class="wheel-count">0 names loaded</div>
+          </div>
+        </div>
+        <div class="result wheelResult">
+          <div class="result-inner">
+            <img class="result-sticker wheelSticker" src="stickers/gg-removebg-preview.png" alt="" loading="lazy">
+            <div class="ship-name">THE BAT HAS CHOSEN</div>
+            <div class="ship-name wheelWinner"
+              style="font-size:clamp(20px,4.6vw,30px); color:var(--gold); text-shadow:0 0 20px rgba(233,213,255,.6);">
+              ???</div>
+            <button class="again-btn wheelAgainBtn">🔁 Spin Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mode-panel" id="panel-rate">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">RATE MY <span>CHAT</span></h2>
+      <p class="card-sub">Type a username, pick your poison, get judged instantly</p>
+
+      <div class="rate-layout">
+        <div class="slot p1" style="max-width:420px;margin:0 auto;">
+          <label class="pixel">CHATTER</label>
+          <input id="rateName" type="text" maxlength="20" placeholder="e.g. mod_ghost_99" autocomplete="off">
+          <div class="avatar-row">
+            <div class="avatar" id="avaRate">?</div>
+            <div class="avatar-hint">about to be judged</div>
+          </div>
+        </div>
+
+        <div class="rate-toggle">
+          <button class="rate-mode-btn active" data-rate="roast" id="roastBtn">🔥 ROAST</button>
+          <button class="rate-mode-btn" data-rate="hype" id="hypeBtn">✨ HYPE</button>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="match-btn" id="rateBtn">JUDGE THEM 🦇</button>
+      </div>
+
+      <div class="result" id="rateResult">
+        <div class="result-inner">
+          <img class="result-sticker" id="rateSticker" src="stickers/rage.png" alt="" loading="lazy">
+          <div class="ship-name" id="rateTitle">???</div>
+          <div class="status-desc" id="rateLine" style="font-size:16px;color:var(--ink);max-width:520px;">&nbsp;</div>
+          <button class="again-btn" id="rateAgainBtn">🔁 Judge Again</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mode-panel" id="panel-fortune">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">BAT <span>FORTUNE</span></h2>
+      <p class="card-sub">Draw a card from the roost. The bats know things.</p>
+
+      <div class="tarot-row" id="tarotRow"></div>
+
+      <div class="result" id="fortuneResult">
+        <div class="result-inner">
+          <img class="result-sticker" id="fortuneSticker" src="stickers/mindblow-removebg-preview.png" alt=""
+            loading="lazy">
+          <div class="tarot-big" id="tarotBig">🦇</div>
+          <div class="ship-name" id="fortuneTitle">???</div>
+          <div class="status-desc" id="fortuneLine" style="font-size:15px;max-width:520px;">&nbsp;</div>
+          <button class="again-btn" id="fortuneAgainBtn">🔁 Draw Again</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="history-section" id="historySection">
+      <div class="history-head">
+        <h3 class="pixel history-title">RECENT CHAOS</h3>
+        <button class="ghost-btn" id="historyClear">Clear log</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="history-empty" id="historyEmpty">
+          <img class="history-empty-sticker" src="stickers/zzz-removebg-preview.png" alt="" loading="lazy">
+          <div>Nothing yet &mdash; go break some hearts.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <img class="footer-sticker" src="stickers/cheers-removebg-preview.png" alt="" loading="lazy">
+      made with chaos for <b>Batcy's</b> chat &middot; results are scientifically meaningless &middot; 100% vibes-based
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ============ FOLLOW MARQUEE (kick-style scrolling band) ============ */
+      (function buildMarquee() {
+        const root = document.getElementById('followMarquee');
+        const phrase = 'FOLLOW DAMNBATCY • ';
+        const repeated = phrase.repeat(14);
+        ['a', 'b', 'c', 'd'].forEach(key => {
+          const lane = document.createElement('div');
+          lane.className = 'lane ' + key;
+          const half1 = document.createElement('span');
+          half1.textContent = repeated;
+          const half2 = document.createElement('span');
+          half2.textContent = repeated;
+          lane.appendChild(half1);
+          lane.appendChild(half2);
+          root.appendChild(lane);
+        });
+      })();
+
+      /* ============ BACKGROUND CANVAS: stars + drifting hearts + grid ============ */
+      const bgCanvas = document.getElementById('bgCanvas');
+      const bgCtx = bgCanvas.getContext('2d');
+      let W, H, DPR;
+      function resizeBg() {
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        W = bgCanvas.width = window.innerWidth * DPR;
+        H = bgCanvas.height = window.innerHeight * DPR;
+        bgCanvas.style.width = window.innerWidth + 'px';
+        bgCanvas.style.height = window.innerHeight + 'px';
+      }
+      resizeBg();
+      window.addEventListener('resize', resizeBg);
+
+      const STAR_COUNT = 90;
+      const stars = Array.from({ length: STAR_COUNT }, () => ({
+        x: Math.random(), y: Math.random(),
+        r: Math.random() * 1.6 + 0.4,
+        tw: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.15 + 0.03
+      }));
+
+      const BAT_COUNT = 16;
+      function makeBat() {
+        return {
+          x: Math.random(),
+          y: 1.15 + Math.random() * 0.3,
+          size: Math.random() * 16 + 9,
+          speed: Math.random() * 0.00035 + 0.00018,
+          hue: Math.random() < 0.5 ? 'p' : 'v',
+          alpha: Math.random() * 0.4 + 0.18,
+          wob: Math.random() * Math.PI * 2,
+          flap: Math.random() * Math.PI * 2,
+          flapSpeed: Math.random() * 0.006 + 0.006
+        };
+      }
+      const hearts = Array.from({ length: BAT_COUNT }, makeBat);
+
+      function drawBat(ctx, cx, cy, size, color, alpha, flap) {
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(cx, cy);
+        const wingLift = Math.sin(flap) * 0.55 + 0.55;
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = size * 1.2;
+        ctx.beginPath();
+        const s = size;
+        ctx.moveTo(0, -s * 0.15);
+        ctx.quadraticCurveTo(-s * 0.3, -s * 0.5, -s * 1.1, -s * 0.75 * wingLift);
+        ctx.quadraticCurveTo(-s * 0.55, -s * 0.15, -s * 0.65, s * 0.1);
+        ctx.quadraticCurveTo(-s * 0.35, -s * 0.05, -s * 0.12, s * 0.05);
+        ctx.lineTo(0, s * 0.32);
+        ctx.lineTo(s * 0.12, s * 0.05);
+        ctx.quadraticCurveTo(s * 0.35, -s * 0.05, s * 0.65, s * 0.1);
+        ctx.quadraticCurveTo(s * 0.55, -s * 0.15, s * 1.1, -s * 0.75 * wingLift);
+        ctx.quadraticCurveTo(s * 0.3, -s * 0.5, 0, -s * 0.15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      let t0 = performance.now();
+      function loopBg(now) {
+        const dt = now - t0; t0 = now;
+        bgCtx.clearRect(0, 0, W, H);
+
+        // subtle grid
+        bgCtx.save();
+        bgCtx.globalAlpha = 0.05;
+        bgCtx.strokeStyle = '#b48bff';
+        bgCtx.lineWidth = 1 * DPR;
+        const gap = 60 * DPR;
+        const offset = (now * 0.008) % gap;
+        for (let x = -gap; x < W + gap; x += gap) {
+          bgCtx.beginPath(); bgCtx.moveTo(x + offset, 0); bgCtx.lineTo(x + offset, H); bgCtx.stroke();
+        }
+        for (let y = -gap; y < H + gap; y += gap) {
+          bgCtx.beginPath(); bgCtx.moveTo(0, y); bgCtx.lineTo(W, y); bgCtx.stroke();
+        }
+        bgCtx.restore();
+
+        // stars
+        stars.forEach(s => {
+          s.tw += 0.03;
+          const alpha = 0.4 + Math.sin(s.tw) * 0.4;
+          bgCtx.save();
+          bgCtx.globalAlpha = Math.max(0, alpha);
+          bgCtx.fillStyle = '#ffffff';
+          bgCtx.beginPath();
+          bgCtx.arc(s.x * W, s.y * H, s.r * DPR, 0, Math.PI * 2);
+          bgCtx.fill();
+          bgCtx.restore();
+          s.y -= s.speed * 0.0006 * dt;
+          if (s.y < -0.02) s.y = 1.02;
+        });
+
+        // drifting bats
+        hearts.forEach(h => {
+          h.y -= h.speed * dt;
+          h.wob += 0.002 * dt;
+          h.flap += h.flapSpeed * dt;
+          const x = (h.x + Math.sin(h.wob) * 0.01) * W;
+          const y = h.y * H;
+          const color = h.hue === 'p' ? 'rgba(168,85,247,1)' : 'rgba(124,43,245,1)';
+          drawBat(bgCtx, x, y, h.size * DPR, color, h.alpha, h.flap);
+          if (h.y < -0.08) {
+            Object.assign(h, makeBat(), { y: 1.1 });
+          }
+        });
+
+        requestAnimationFrame(loopBg);
+      }
+      requestAnimationFrame(loopBg);
+
+      /* ============ FX CANVAS: burst particles on match ============ */
+      const fxCanvas = document.getElementById('fxCanvas');
+      const fxCtx = fxCanvas.getContext('2d');
+      function resizeFx() {
+        fxCanvas.width = window.innerWidth * (window.devicePixelRatio || 1);
+        fxCanvas.height = window.innerHeight * (window.devicePixelRatio || 1);
+        fxCanvas.style.width = window.innerWidth + 'px';
+        fxCanvas.style.height = window.innerHeight + 'px';
+      }
+      resizeFx();
+      window.addEventListener('resize', resizeFx);
+
+      let particles = [];
+      function burst(cx, cy, count, kind) {
+        const FDPR = window.devicePixelRatio || 1;
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = (Math.random() * 3.2 + 1.2) * FDPR;
+          particles.push({
+            x: cx * FDPR, y: cy * FDPR,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - (2 * FDPR),
+            life: 1,
+            decay: Math.random() * 0.012 + 0.008,
+            size: (Math.random() * 7 + 4) * FDPR,
+            kind: kind,
+            color: ['#a855f7', '#e9d5ff', '#b48bff', '#c084fc'][Math.floor(Math.random() * 4)],
+            rot: Math.random() * Math.PI,
+            vrot: (Math.random() - 0.5) * 0.2
+          });
+        }
+      }
+      function drawPixelBat(ctx, x, y, s, color, alpha, rot) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.shadowColor = color; ctx.shadowBlur = s * 1.2;
+        ctx.beginPath();
+        ctx.moveTo(0, -s * 0.15);
+        ctx.quadraticCurveTo(-s * 0.3, -s * 0.5, -s * 1.1, -s * 0.75);
+        ctx.quadraticCurveTo(-s * 0.55, -s * 0.15, -s * 0.65, s * 0.1);
+        ctx.quadraticCurveTo(-s * 0.35, -s * 0.05, -s * 0.12, s * 0.05);
+        ctx.lineTo(0, s * 0.32);
+        ctx.lineTo(s * 0.12, s * 0.05);
+        ctx.quadraticCurveTo(s * 0.35, -s * 0.05, s * 0.65, s * 0.1);
+        ctx.quadraticCurveTo(s * 0.55, -s * 0.15, s * 1.1, -s * 0.75);
+        ctx.quadraticCurveTo(s * 0.3, -s * 0.5, 0, -s * 0.15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+      function loopFx() {
+        fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          p.vy += 0.06 * (window.devicePixelRatio || 1);
+          p.life -= p.decay;
+          p.rot += p.vrot;
+          if (p.kind === 'bat') {
+            drawPixelBat(fxCtx, p.x, p.y, p.size, p.color, Math.max(p.life, 0), p.rot);
+          } else {
+            fxCtx.save();
+            fxCtx.globalAlpha = Math.max(p.life, 0);
+            fxCtx.fillStyle = p.color;
+            fxCtx.shadowColor = p.color; fxCtx.shadowBlur = p.size;
+            fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rot);
+            fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            fxCtx.restore();
+          }
+        });
+        particles = particles.filter(p => p.life > 0 && p.y < fxCanvas.height + 50);
+        requestAnimationFrame(loopFx);
+      }
+      requestAnimationFrame(loopFx);
+
+      /* ============ AUDIO (WebAudio synth SFX, no external files) ============ */
+      let audioCtx = null;
+      let sfxOn = true;
+      function ensureAudio() {
+        if (!audioCtx) {
+          try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
+      }
+      function tone(freq, dur, type, delay, vol) {
+        if (!sfxOn || !audioCtx) return;
+        const t = audioCtx.currentTime + (delay || 0);
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type || 'square';
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(vol || 0.08, t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + dur + 0.02);
+      }
+      function sfxClick() { tone(340, 0.06, 'square', 0, 0.05); }
+      function sfxHover() { tone(880, 0.03, 'sine', 0, 0.02); }
+      function sfxWhoosh() {
+        if (!sfxOn || !audioCtx) return;
+        const dur = 1.0;
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, t);
+        osc.frequency.exponentialRampToValueAtTime(680, t + dur * 0.6);
+        osc.frequency.exponentialRampToValueAtTime(90, t + dur);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(0.05, t + 0.1);
+        gain.gain.linearRampToValueAtTime(0.0001, t + dur);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t); osc.stop(t + dur + 0.02);
+      }
+      function sfxFanfare() {
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, 0.22, 'square', i * 0.11, 0.06));
+      }
+      function sfxSad() {
+        [392, 349.2, 293.6, 246.9].forEach((f, i) => tone(f, 0.3, 'triangle', i * 0.14, 0.06));
+      }
+      function sfxBuzzer() {
+        if (!sfxOn || !audioCtx) return;
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, t);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(0.09, t + 0.02);
+        gain.gain.linearRampToValueAtTime(0.0001, t + 0.35);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t); osc.stop(t + 0.4);
+        tone(110, 0.3, 'square', 0.05, 0.06);
+      }
+      function sfxChime() {
+        [880, 1108.7, 1318.5, 1760].forEach((f, i) => tone(f, 0.5, 'sine', i * 0.09, 0.05));
+      }
+      function sfxReel() {
+        tone(200 + Math.random() * 200, 0.04, 'square', 0, 0.03);
+      }
+
+      const sfxToggle = document.getElementById('sfxToggle');
+      const iconOn = document.getElementById('sfxIconOn');
+      const iconOff = document.getElementById('sfxIconOff');
+      sfxToggle.addEventListener('click', () => {
+        ensureAudio();
+        sfxOn = !sfxOn;
+        iconOn.style.display = sfxOn ? 'block' : 'none';
+        iconOff.style.display = sfxOn ? 'none' : 'block';
+        if (sfxOn) tone(660, 0.08, 'sine', 0, 0.05);
+      });
+
+      /* ============ LIVE STATUS (demo toggle) ============ */
+      const liveDot = document.getElementById('liveDot');
+      const liveText = document.getElementById('liveText');
+      function setLive(isLive) {
+        liveDot.classList.toggle('on', isLive);
+        liveText.textContent = isLive ? 'LIVE ON KICK' : 'OFFLINE';
+      }
+      setLive(false);
+      // Lightweight demo flicker so the badge feels alive; replace with real API polling if desired.
+      setTimeout(() => setLive(Math.random() < 0.35), 2600);
+
+      /* ============ MATCHMAKER LOGIC ============ */
+      const name1El = document.getElementById('name1');
+      const name2El = document.getElementById('name2');
+      const ava1 = document.getElementById('ava1');
+      const ava2 = document.getElementById('ava2');
+      const matchBtn = document.getElementById('matchBtn');
+      const beam = document.getElementById('beam');
+      const result = document.getElementById('result');
+      const shipNameEl = document.getElementById('shipName');
+      const matchSticker = document.getElementById('matchSticker');
+      const scoreReel = document.getElementById('scoreReel');
+      const meterFill = document.getElementById('meterFill');
+      const statusMsg = document.getElementById('statusMsg');
+      const statusDesc = document.getElementById('statusDesc');
+      const againBtn = document.getElementById('againBtn');
+
+      [name1El, name2El].forEach((el, idx) => {
+        el.addEventListener('input', () => {
+          const target = idx === 0 ? ava1 : ava2;
+          target.textContent = el.value.trim() ? el.value.trim()[0].toUpperCase() : '?';
+        });
+      });
+
+      function hashStr(str) {
+        let h = 2166136261;
+        for (let i = 0; i < str.length; i++) {
+          h ^= str.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+      function mulberry32(seed) {
+        return function () {
+          seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      let clickSalt = 0;
+      function computeScore(a, b) {
+        const key = a.toLowerCase() + '::' + b.toLowerCase() + '::' + clickSalt;
+        const rand = mulberry32(hashStr(key));
+        // blend a couple of draws for a nicer bell-ish spread
+        const raw = (rand() * 0.6 + rand() * 0.4);
+        return Math.round(raw * 100);
+      }
+
+      function shipName(a, b) {
+        const half1 = a.slice(0, Math.max(1, Math.ceil(a.length / 2)));
+        const half2 = b.slice(Math.floor(b.length / 2));
+        let name = (half1 + half2);
+        if (name.length < 3) name = a.slice(0, 3) + b.slice(0, 3);
+        return name.charAt(0).toUpperCase() + name.slice(1);
+      }
+
+      const MATCH_LOW = [
+        "What is this? Zero chemistry, just pure emotional damage. 💀",
+        "Cringe level 1000. Stop coping and go queue up solo!",
+        "Worse combination than playing Ranked on 300ms ping.",
+        "A walking, talking red flag parade 🚩",
+        "You two look like a toxic Valorant duo. Surrender at 15 minutes!",
+        "Friendly? Sure. Romantic? Absolutely zero chance, bro.",
+        "This isn't romantic, this is a full character stress test! 💔",
+        "Even Batcy's mod team can't moderate this absolute disaster.",
+        "Instant Alt+F4. Delete this matchup immediately.",
+        "Unmatched synergy. You guys fight like two angry NPCs.",
+        "This duo has less synergy than a support who refuses to ward.",
+        "Certified 0 IQ play. The shippers have logged off.",
+        "Chat collectively said 'nah' at the exact same time.",
+        "This matchup lagged so hard even the servers gave up.",
+        "Bro this ain't a ship, this is a disqualification.",
+      ];
+      const MATCH_MID = [
+        "Chaotic energy... It could work if you both stop trolling!",
+        "A little bit of flame, a little bit of love. Toxic, but aesthetic! 🔥",
+        "Walking on thin ice! Handle this relationship with extreme care.",
+        "It's complicated, but there's a tiny sliver of hope.",
+        "50/50 balance. Exactly like a coin flip in a clutch round.",
+        "Maybe? There's a chance... if someone buys the other a pizza!",
+        "Delicate vibes. One bad joke and it all crumbles.",
+        "Situationship alert! Needs a patch update to stabilize.",
+        "Mid-tier rizz detected. Ranked but never climbing higher.",
+        "Could go either way, like a coinflip in overtime.",
+        "Not quite meta, not quite trash. Solid B-tier duo.",
+        "Needs three more emote exchanges before it's canon.",
+      ];
+      const MATCH_HIGH = [
+        "ABSOLUTE CINEMA! THIS WAS WRITTEN IN THE STARS! 💖🔥",
+        "Match made in heaven! Instant carry in life and in gaming!",
+        "Endgame couple status! Time to update your stream bios!",
+        "100% Soulmates! Batcy officially approves this wedding 💍✨",
+        "Flawless Victory! Huge W-Rizz in the chat!",
+        "Game over, pack it up! Shut down the stream, they won life!",
+        "Main character duo unlocked! Pure wholesome energy!",
+        "Instant marriage speedrun record set! 🎉",
+        "This is the crossover episode nobody asked for but everybody needed.",
+        "Chat is unanimously typing 'W' right now. No cap.",
+        "S-Tier synergy. Meta-defining duo confirmed.",
+        "This ship just broke the algorithm. Certified viral moment.",
+      ];
+      const TIERS = [
+        { min: 80, label: "PERFECT MATCH 💖", pool: MATCH_HIGH, cls: 'perfect', stickers: ['love-removebg-preview.png', 'hype-removebg-preview.png', 'rich-removebg-preview.png'] },
+        { min: 41, label: "CHAOTIC MATCH ⚡", pool: MATCH_MID, cls: 'ok', stickers: ['nice-removebg-preview.png', 'gg-removebg-preview.png', 'cool-removebg-preview.png'] },
+        { min: 0, label: "BAD MATCH 💀", pool: MATCH_LOW, cls: 'bad', stickers: ['salty-removebg-preview.png', 'diss-removebg-preview.png', 'cry-removebg-preview.png'] },
+      ];
+      function tierFor(score) {
+        const tier = TIERS.find(t => score >= t.min);
+        return { label: tier.label, desc: pick(tier.pool), cls: tier.cls, sticker: pick(tier.stickers) };
+      }
+
+      function animateReel(finalScore, durationMs) {
+        const start = performance.now();
+        function step(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / durationMs, 1);
+          if (progress < 1) {
+            const shown = Math.floor(Math.random() * 100);
+            scoreReel.textContent = String(shown).padStart(2, '0');
+            if (Math.random() < 0.5) sfxReel();
+            requestAnimationFrame(step);
+          } else {
+            scoreReel.textContent = String(finalScore).padStart(2, '0');
+          }
+        }
+        requestAnimationFrame(step);
+      }
+
+      function fireBeam() {
+        beam.classList.remove('firing');
+        void beam.offsetWidth;
+        beam.classList.add('firing');
+      }
+
+      function rippleAt(btn, evt) {
+        const rect = btn.getBoundingClientRect();
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const size = Math.max(rect.width, rect.height);
+        r.style.width = r.style.height = size + 'px';
+        const x = (evt.touches ? evt.touches[0].clientX : evt.clientX) - rect.left - size / 2;
+        const y = (evt.touches ? evt.touches[0].clientY : evt.clientY) - rect.top - size / 2;
+        r.style.left = x + 'px'; r.style.top = y + 'px';
+        btn.appendChild(r);
+        setTimeout(() => r.remove(), 650);
+      }
+
+      let busy = false;
+      matchBtn.addEventListener('click', (evt) => {
+        ensureAudio();
+        if (busy) return;
+        const n1 = (name1El.value.trim() || 'MysteryChatter1');
+        const n2 = (name2El.value.trim() || 'MysteryChatter2');
+        busy = true;
+        clickSalt++;
+        rippleAt(matchBtn, evt);
+        sfxClick();
+        matchBtn.disabled = true;
+        fireBeam();
+        sfxWhoosh();
+
+        setTimeout(() => {
+          const score = computeScore(n1, n2);
+          const tier = tierFor(score);
+
+          shipNameEl.textContent = shipName(n1, n2).toUpperCase() + ' 🦇';
+          statusMsg.textContent = tier.label;
+          statusDesc.textContent = tier.desc;
+          statusMsg.style.color = score >= 80 ? 'var(--pink-soft)' : (score < 41 ? 'var(--danger)' : 'var(--gold)');
+          matchSticker.src = 'stickers/' + tier.sticker;
+          matchSticker.style.animation = 'none';
+          void matchSticker.offsetWidth;
+          matchSticker.style.animation = '';
+
+          result.classList.add('show');
+          animateReel(score, 1100);
+
+          setTimeout(() => {
+            meterFill.style.width = score + '%';
+          }, 60);
+
+          setTimeout(() => {
+            if (score >= 80) {
+              sfxFanfare();
+              const rect = result.getBoundingClientRect();
+              burst(window.innerWidth / 2, rect.top + 80, 46, 'bat');
+            } else if (score < 41) {
+              sfxBuzzer();
+              const rect = result.getBoundingClientRect();
+              burst(window.innerWidth / 2, rect.top + 80, 26, 'square');
+            } else {
+              tone(500, 0.12, 'sine', 0, 0.05);
+            }
+            matchBtn.disabled = false;
+            busy = false;
+            result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 1150);
+
+        }, 950);
+      });
+
+      matchBtn.addEventListener('mouseenter', () => { ensureAudio(); sfxHover(); });
+
+      againBtn.addEventListener('click', () => {
+        ensureAudio();
+        sfxClick();
+        result.classList.remove('show');
+        setTimeout(() => {
+          name1El.focus();
+        }, 300);
+      });
+
+      /* ============ HISTORY LOG (shared across modes, localStorage) ============ */
+      const HISTORY_KEY = 'batcyMatchyHistory';
+      const historyList = document.getElementById('historyList');
+      const historyEmpty = document.getElementById('historyEmpty');
+      const historyClear = document.getElementById('historyClear');
+
+      function loadHistory() {
+        try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+        catch (e) { return []; }
+      }
+      function saveHistory(items) {
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, 25))); } catch (e) { }
+      }
+      function renderHistory() {
+        const items = loadHistory();
+        historyList.querySelectorAll('.history-item').forEach(n => n.remove());
+        historyEmpty.style.display = items.length ? 'none' : 'flex';
+        items.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          row.innerHTML = '<span class="h-ico">' + item.ico + '</span><span class="h-text">' + item.text + '</span><span class="h-time">' + item.time + '</span>';
+          historyList.appendChild(row);
+        });
+      }
+      function logHistory(ico, text) {
+        const items = loadHistory();
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        items.unshift({ ico, text, time });
+        saveHistory(items);
+        renderHistory();
+      }
+      function escapeHtml(str) {
+        return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+      historyClear.addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        saveHistory([]);
+        renderHistory();
+      });
+      renderHistory();
+
+      /* ============ MODE TABS ============ */
+      const modeTabs = document.querySelectorAll('.mode-tab');
+      const modePanels = document.querySelectorAll('.mode-panel');
+      modeTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          const mode = tab.dataset.mode;
+          modeTabs.forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+          modePanels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + mode));
+        });
+      });
+
+      /* ============ ROULETTE WHEEL (multi-instance: girls / boys / mixed) ============ */
+      const WHEEL_COLOR_SETS = {
+        pink: ['#ff2f7e', '#ff8ab8', '#c084fc', '#e9d5ff', '#a855f7', '#ffb3d1'],
+        violet: ['#7c2bf5', '#a855f7', '#5b1fb0', '#b48bff', '#c084fc', '#3a0e6b'],
+        gold: ['#e9d5ff', '#ffd35c', '#c084fc', '#a855f7', '#f4e2ff', '#7c2bf5'],
+      };
+      const WHEEL_SAMPLES = {
+        girls: ['luna_bee', 'xx_starr', 'moonlit_kay', 'vibecheck_val', 'pixel_witchy', 'bat_princess', 'nightowl_ria', 'glowup_gwen'],
+        boys: ['xX_PogChamp_Xx', 'lurker_supreme', 'bat_enjoyer42', 'emo_te_spammer', 'chaos_gremlin_fan', 'mod_ghost_99', 'clutch_or_kick', 'rng_god_99'],
+        mixed: ['anyone_chat', 'random_lurker', 'bat_squad_99', 'frame_perfect', 'chat_royalty', 'no_life_andy', 'side_quest_sam', 'duo_queue_deb'],
+      };
+      const WHEEL_WINNER_STICKERS = ['gg-removebg-preview.png', 'hype-removebg-preview.png', 'nice-removebg-preview.png', 'cheers-removebg-preview.png'];
+
+      function initWheel(root) {
+        const wheelCanvas = root.querySelector('.wheelCanvas');
+        const wheelCtx = wheelCanvas.getContext('2d');
+        const wheelNamesEl = root.querySelector('.wheelNames');
+        const wheelCount = root.querySelector('.wheel-count');
+        const spinBtn = root.querySelector('.spinBtn');
+        const wheelResult = root.querySelector('.wheelResult');
+        const wheelWinner = root.querySelector('.wheelWinner');
+        const wheelSticker = root.querySelector('.wheelSticker');
+        const wheelAgainBtn = root.querySelector('.wheelAgainBtn');
+        const wheelAddSample = root.querySelector('.wheelAddSample');
+        const wheelClear = root.querySelector('.wheelClear');
+        const colors = WHEEL_COLOR_SETS[root.dataset.accent] || WHEEL_COLOR_SETS.violet;
+        const samples = WHEEL_SAMPLES[root.id.replace('wheel-', '')] || WHEEL_SAMPLES.mixed;
+
+        let wheelRotation = 0;
+        let wheelSpinning = false;
+
+        function getWheelNames() {
+          return wheelNamesEl.value.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 24);
+        }
+        function drawWheel() {
+          const names = getWheelNames();
+          const size = wheelCanvas.width;
+          const cx = size / 2, cy = size / 2, r = size / 2 - 6;
+          wheelCtx.clearRect(0, 0, size, size);
+          if (names.length === 0) {
+            wheelCtx.save();
+            wheelCtx.translate(cx, cy); wheelCtx.rotate(wheelRotation);
+            wheelCtx.beginPath(); wheelCtx.arc(0, 0, r, 0, Math.PI * 2);
+            wheelCtx.fillStyle = 'rgba(255,255,255,0.04)';
+            wheelCtx.fill();
+            wheelCtx.strokeStyle = 'rgba(180,139,255,0.3)'; wheelCtx.lineWidth = 2; wheelCtx.stroke();
+            wheelCtx.restore();
+            wheelCtx.fillStyle = 'rgba(148,131,184,0.8)';
+            wheelCtx.font = '13px Space Grotesk, sans-serif';
+            wheelCtx.textAlign = 'center';
+            wheelCtx.fillText('add names to spin', cx, cy);
+            return;
+          }
+          const slice = (Math.PI * 2) / names.length;
+          wheelCtx.save();
+          wheelCtx.translate(cx, cy);
+          wheelCtx.rotate(wheelRotation);
+          names.forEach((name, i) => {
+            const start = i * slice, end = start + slice;
+            wheelCtx.beginPath();
+            wheelCtx.moveTo(0, 0);
+            wheelCtx.arc(0, 0, r, start, end);
+            wheelCtx.closePath();
+            wheelCtx.fillStyle = colors[i % colors.length];
+            wheelCtx.fill();
+            wheelCtx.save();
+            wheelCtx.strokeStyle = 'rgba(5,3,8,0.55)'; wheelCtx.lineWidth = 2; wheelCtx.stroke();
+            wheelCtx.restore();
+
+            wheelCtx.save();
+            wheelCtx.rotate(start + slice / 2);
+            wheelCtx.textAlign = 'right';
+            wheelCtx.fillStyle = '#0a0512';
+            wheelCtx.font = '600 13px Space Grotesk, sans-serif';
+            const label = name.length > 14 ? name.slice(0, 13) + '…' : name;
+            wheelCtx.fillText(label, r - 14, 5);
+            wheelCtx.restore();
+          });
+          wheelCtx.beginPath(); wheelCtx.arc(0, 0, r, 0, Math.PI * 2);
+          wheelCtx.strokeStyle = 'rgba(255,255,255,0.15)'; wheelCtx.lineWidth = 3; wheelCtx.stroke();
+          wheelCtx.restore();
+        }
+        function refreshWheelCount() {
+          const n = getWheelNames().length;
+          wheelCount.textContent = n + ' name' + (n === 1 ? '' : 's') + ' loaded';
+        }
+        wheelNamesEl.addEventListener('input', () => { drawWheel(); refreshWheelCount(); });
+        wheelAddSample.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          wheelNamesEl.value = samples.join('\n');
+          drawWheel(); refreshWheelCount();
+        });
+        wheelClear.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          wheelNamesEl.value = '';
+          drawWheel(); refreshWheelCount();
+        });
+
+        spinBtn.addEventListener('click', () => {
+          ensureAudio();
+          if (wheelSpinning) return;
+          const names = getWheelNames();
+          if (names.length === 0) { sfxSad(); return; }
+          wheelSpinning = true;
+          spinBtn.disabled = true;
+          wheelResult.classList.remove('show');
+          sfxWhoosh();
+
+          const slice = (Math.PI * 2) / names.length;
+          const winnerIdx = Math.floor(Math.random() * names.length);
+          // pointer is at top (-PI/2). We want winnerIdx's slice center to land there.
+          const targetAngle = -Math.PI / 2 - (winnerIdx * slice + slice / 2);
+          const extraSpins = 6 + Math.random() * 2;
+          const TAU = Math.PI * 2;
+          const forwardDelta = ((targetAngle - wheelRotation) % TAU + TAU) % TAU;
+          const finalRotation = wheelRotation + extraSpins * TAU + forwardDelta;
+
+          const startRot = wheelRotation;
+          const totalDelta = finalRotation - startRot;
+          const dur = 4200;
+          const start = performance.now();
+          let lastTick = 0;
+          function easeOutCubicQuint(t) { return 1 - Math.pow(1 - t, 4.5); }
+          function step(now) {
+            const elapsed = now - start;
+            const t = Math.min(elapsed / dur, 1);
+            const eased = easeOutCubicQuint(t);
+            wheelRotation = startRot + totalDelta * eased;
+            drawWheel();
+            if (Math.floor(wheelRotation * 8) !== lastTick) {
+              lastTick = Math.floor(wheelRotation * 8);
+              if (t < 0.96) tone(220 + Math.random() * 80, 0.03, 'square', 0, 0.03);
+            }
+            if (t < 1) {
+              requestAnimationFrame(step);
+            } else {
+              wheelSpinning = false;
+              spinBtn.disabled = false;
+              const winner = names[winnerIdx];
+              wheelWinner.textContent = winner.toUpperCase() + ' 🦇';
+              if (wheelSticker) {
+                wheelSticker.src = 'stickers/' + pick(WHEEL_WINNER_STICKERS);
+                wheelSticker.style.animation = 'none';
+                void wheelSticker.offsetWidth;
+                wheelSticker.style.animation = '';
+              }
+              wheelResult.classList.add('show');
+              sfxFanfare();
+              const rect = wheelResult.getBoundingClientRect();
+              burst(window.innerWidth / 2, rect.top + 60, 40, 'bat');
+              logHistory('🎡', 'Wheel picked <b>' + escapeHtml(winner) + '</b> out of ' + names.length);
+              wheelResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+          requestAnimationFrame(step);
+        });
+        wheelAgainBtn.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          wheelResult.classList.remove('show');
+        });
+        drawWheel(); refreshWheelCount();
+      }
+
+      document.querySelectorAll('.wheel-instance').forEach(initWheel);
+
+      /* ---- wheel sub-tabs (girls / boys / mixed) ---- */
+      const wheelSubtabs = document.querySelectorAll('.wheel-subtab');
+      const wheelInstances = document.querySelectorAll('.wheel-instance');
+      wheelSubtabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          const key = tab.dataset.wheel;
+          wheelSubtabs.forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+          wheelInstances.forEach(inst => inst.classList.toggle('active', inst.id === 'wheel-' + key));
+        });
+      });
+
+      /* ============ RATE MY CHAT ============ */
+      const rateNameEl = document.getElementById('rateName');
+      const avaRate = document.getElementById('avaRate');
+      const roastBtn = document.getElementById('roastBtn');
+      const hypeBtn = document.getElementById('hypeBtn');
+      const rateBtn = document.getElementById('rateBtn');
+      const rateResult = document.getElementById('rateResult');
+      const rateSticker = document.getElementById('rateSticker');
+      const rateTitle = document.getElementById('rateTitle');
+      const rateLine = document.getElementById('rateLine');
+      const rateAgainBtn = document.getElementById('rateAgainBtn');
+
+      let rateMode = 'roast';
+      rateNameEl.addEventListener('input', () => {
+        avaRate.textContent = rateNameEl.value.trim() ? rateNameEl.value.trim()[0].toUpperCase() : '?';
+      });
+      [[roastBtn, 'roast'], [hypeBtn, 'hype']].forEach(([btn, mode]) => {
+        btn.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          rateMode = mode;
+          roastBtn.classList.toggle('active', mode === 'roast');
+          hypeBtn.classList.toggle('active', mode === 'hype');
+        });
+      });
+
+      const ROAST_TITLES = [
+        'CHAOS VERDICT 🔥', 'ROASTED BY THE BATS 🦇', 'MODS, TAKE NOTES 📋', 'CHAT COURT IS IN SESSION ⚖️',
+        "RATIO'D BY THE ALGORITHM 📉", 'HARDSTUCK FOR LIFE 🪦', 'SKILL ISSUE CONFIRMED 🎮', 'THIS IS FINE (IT IS NOT) 🔥🐶',
+      ];
+      const ROAST_LINES = [
+        "{n} plays like they're using a trackpad with a 500ms lag delay.",
+        "{n}'s rizz is like budget Wi-Fi: disconnected 90% of the time.",
+        "{n} talks big in chat, but the actual gameplay is Hardstuck Bronze.",
+        "Even a Bot on Easy mode has better pickup lines than {n}.",
+        "Main character energy? Nah, {n} is the side-NPC selling broken potions.",
+        "{n} got friendzoned in 4K high definition on a live stream.",
+        "{n} has the exact same chemistry as room-temperature soda.",
+        "{n}'s rizz level is negative 100. Needs a whole patch overhaul to fix this.",
+        "{n} looks like they leave the match the second they get knocked down.",
+        "{n}'s romantic advice comes straight from a WikiHow article.",
+        "{n} types like they're being charged by the letter. Every message: 'W'. Groundbreaking.",
+        "{n} has never once won a raffle and everyone in chat knows it.",
+        "{n}'s emote spam has its own gravitational pull at this point.",
+        "{n} shows up during ad breaks specifically to say 'ads lol' every single time.",
+        "{n} is convinced they invented the inside joke they just repeated for the 40th time.",
+        "{n}'s mic energy in voice chat does not match their chat energy. We all know.",
+        "{n} still hasn't recovered from that one L take three streams ago.",
+        "{n} lurking so hard they might legally be considered furniture.",
+        "{n} said 'first' in a stream that's been live for two hours.",
+        "{n}'s pfp has been the same default egg since day one. Commitment, honestly.",
+        "{n} queues into Ranked and immediately becomes the reason for the loss.",
+        "{n} has 'this you?' energy times ten.",
+        "{n} peaked in the tutorial level and never recovered.",
+        "{n} is giving major NPC-with-one-line-of-dialogue vibes.",
+        "{n} would lose a 1v1 against the loading screen.",
+      ];
+      const HYPE_TITLES = [
+        'CERTIFIED LEGEND 🌟', 'THE BATS APPROVE 🦇', 'MVP OF CHAT 🏆', 'main character energy ✨',
+        'GIGA CHAD STATUS 💪', 'ALGORITHM-BLESSED 📈', 'CHAT MVP AWARD 🥇', 'UNDENIABLE RIZZ 😤',
+      ];
+      const HYPE_LINES = [
+        "{n} brings the exact right energy at the exact right moment, every single time.",
+        "{n} is out here carrying chat's morale on their back and nobody's thanked them enough.",
+        "{n} has never once posted a bad take. Flawless record. Respect.",
+        "{n}'s emote game is unmatched — pure chaotic good.",
+        "{n} shows up every stream like it's a scheduled appointment they refuse to miss. Loyalty.",
+        "{n} is the reason new chatters actually feel welcome in here.",
+        "{n} makes one joke and the whole chat quotes it for a week. Icon behavior.",
+        "{n} has main-character plot armor. Nothing bad happens when they're in chat.",
+        "{n} deserves a mod badge just for vibes alone.",
+        "{n} is proof that chat can be unhinged AND wholesome at the same time.",
+        "{n} has giga chad energy detected. Massive W in the chat!",
+        "{n} just hit a legendary moment. Biggest W in stream history!",
+        "{n} is gamer god status achieved. Unstoppable.",
+        "{n} pulled off an insane play. Stream highlight of the entire year!",
+        "{n} has too much drip, too much rizz, chat literally cannot handle this.",
+        "POGGERS! {n} just made the whole chat spam hearts! ❤️⚡",
+        "{n} is an unstoppable force. Just broke the algorithm!",
+        "{n} flexed on 'em. Pure perfection on screen.",
+        "{n} carries harder than the entire support role combined.",
+        "{n} is built different. No notes, only respect.",
+      ];
+      function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+      const ROAST_STICKERS = ['rage.png', 'diss-removebg-preview.png', 'salty-removebg-preview.png', 'cry-removebg-preview.png'];
+      const HYPE_STICKERS = ['hype-removebg-preview.png', 'nice-removebg-preview.png', 'rich-removebg-preview.png', 'cool-removebg-preview.png'];
+
+      rateBtn.addEventListener('click', (evt) => {
+        ensureAudio();
+        const n = rateNameEl.value.trim() || 'MysteryChatter';
+        sfxClick();
+        rippleAt(rateBtn, evt);
+        rateBtn.disabled = true;
+        rateResult.classList.remove('show');
+        sfxWhoosh();
+
+        setTimeout(() => {
+          const isRoast = rateMode === 'roast';
+          const title = pick(isRoast ? ROAST_TITLES : HYPE_TITLES);
+          const line = pick(isRoast ? ROAST_LINES : HYPE_LINES).replace(/\{n\}/g, n);
+          rateTitle.textContent = title;
+          rateLine.textContent = line;
+          rateSticker.src = 'stickers/' + pick(isRoast ? ROAST_STICKERS : HYPE_STICKERS);
+          rateSticker.style.animation = 'none';
+          void rateSticker.offsetWidth;
+          rateSticker.style.animation = '';
+          rateResult.classList.add('show');
+          if (isRoast) { sfxSad(); } else { sfxFanfare(); }
+          const rect = rateResult.getBoundingClientRect();
+          burst(window.innerWidth / 2, rect.top + 60, isRoast ? 20 : 36, isRoast ? 'square' : 'bat');
+          logHistory(isRoast ? '🔥' : '✨', (isRoast ? 'Roasted ' : 'Hyped ') + '<b>' + escapeHtml(n) + '</b>');
+          rateBtn.disabled = false;
+          rateResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 700);
+      });
+      rateAgainBtn.addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        rateResult.classList.remove('show');
+      });
+
+      /* ============ BAT FORTUNE (TAROT) ============ */
+      const tarotRow = document.getElementById('tarotRow');
+      const fortuneResult = document.getElementById('fortuneResult');
+      const tarotBig = document.getElementById('tarotBig');
+      const fortuneSticker = document.getElementById('fortuneSticker');
+      const fortuneTitle = document.getElementById('fortuneTitle');
+      const fortuneLine = document.getElementById('fortuneLine');
+      const fortuneAgainBtn = document.getElementById('fortuneAgainBtn');
+
+      const FORTUNES = [
+        { ico: '🦇', title: 'THE NIGHT FLIGHT', desc: 'Big chaos energy incoming this session. Say yes to the weird idea in chat.', sticker: 'hype-removebg-preview.png' },
+        { ico: '🌙', title: 'THE HOLLOW MOON', desc: 'Something you almost forgot about is about to come back around. Brace.', sticker: 'mindblow-removebg-preview.png' },
+        { ico: '🕯️', title: 'THE LAST CANDLE', desc: 'One viewer is quietly having the best time of their week because of this stream.', sticker: 'love-removebg-preview.png' },
+        { ico: '🗝️', title: 'THE LOCKED DOOR', desc: 'A collab or new game is closer than you think. Keep the door cracked.', sticker: 'cool-removebg-preview.png' },
+        { ico: '🦴', title: 'THE OLD BONES', desc: 'An old inside joke is due for a comeback tonight. The bats demand it.', sticker: 'nice-removebg-preview.png' },
+        { ico: '🕸️', title: 'THE TANGLED WEB', desc: 'Chat is more connected than it looks — a new friendship forms in the shadows.', sticker: 'hi-removebg-preview.png' },
+        { ico: '⚰️', title: 'THE QUIET CRYPT', desc: 'A slow chat moment is coming. Not a bad omen — just a breather before chaos.', sticker: 'zzz-removebg-preview.png' },
+        { ico: '🩸', title: 'THE CRIMSON HOUR', desc: 'Someone is about to say something unhinged and iconic. Clip it.', sticker: 'mindblow-removebg-preview.png' },
+        { ico: '🔮', title: 'THE CLOUDED GLASS', desc: 'The algorithm owes you one. A random new follower becomes a regular.', sticker: 'rich-removebg-preview.png' },
+        { ico: '👑', title: 'THE BAT CROWN', desc: 'Tonight, you are undeniably her. Main character confirmed.', sticker: 'cool-removebg-preview.png' },
+        { ico: '🎮', title: 'THE DISCONNECTED DUO', desc: 'Your next Ranked teammate will disconnect 2 minutes in. Not your fault. Never was.', sticker: 'salty-removebg-preview.png' },
+        { ico: '👁️', title: 'THE LURKING EYE', desc: 'Someone in chat is secretly stalking your socials right now.', sticker: 'diss-removebg-preview.png' },
+        { ico: '🎁', title: 'THE SURPRISE DROP', desc: 'A random gift sub is heading your way when you least expect it.', sticker: 'gg-removebg-preview.png' },
+        { ico: '🌱', title: 'THE GRASS TOUCH', desc: 'Go touch grass today, or your Wi-Fi will drop during the boss fight.', sticker: 'zzz-removebg-preview.png' },
+        { ico: '➕', title: 'THE FOLLOW OMEN', desc: 'A massive W is coming your way — but only if you drop a follow first.', sticker: 'thanks-removebg-preview.png' },
+        { ico: '🤫', title: 'THE TIMEOUT PROPHECY', desc: 'You will try to flirt in chat and immediately get timed out for 10 minutes.', sticker: 'cry-removebg-preview.png' },
+        { ico: '🕊️', title: 'THE PEACEFUL LOBBY', desc: 'Expect immaculate vibes and zero toxic players in your next lobby.', sticker: 'cheers-removebg-preview.png' },
+        { ico: '💧', title: 'THE HYDRATION CALL', desc: 'Drink some water, take a breath, and stop maining trash heroes.', sticker: 'sip-removebg-preview.png' },
+        { ico: '❤️‍🔥', title: 'THE OLD FLAME', desc: 'Your crush is about to accidentally like a post from 3 years ago.', sticker: 'love-removebg-preview.png' },
+        { ico: '🎲', title: 'THE HIGH-RISK ROLL', desc: 'High risk, high reward energy is heading your way today.', sticker: 'rage.png' },
+      ];
+
+      function buildTarotRow() {
+        tarotRow.innerHTML = '';
+        for (let i = 0; i < 5; i++) {
+          const card = document.createElement('div');
+          card.className = 'tarot-card';
+          card.dataset.idx = i;
+          card.addEventListener('click', onTarotPick);
+          tarotRow.appendChild(card);
+        }
+      }
+      function onTarotPick(evt) {
+        ensureAudio();
+        document.querySelectorAll('.tarot-card').forEach(c => c.removeEventListener('click', onTarotPick));
+        const card = evt.currentTarget;
+        card.classList.add('picked');
+        sfxClick();
+        fortuneResult.classList.remove('show');
+        sfxWhoosh();
+
+        setTimeout(() => {
+          const f = pick(FORTUNES);
+          tarotBig.textContent = f.ico;
+          fortuneSticker.src = 'stickers/' + f.sticker;
+          fortuneSticker.style.animation = 'none';
+          void fortuneSticker.offsetWidth;
+          fortuneSticker.style.animation = '';
+          fortuneTitle.textContent = f.title;
+          fortuneLine.textContent = f.desc;
+          fortuneResult.classList.add('show');
+          sfxChime();
+          const rect = fortuneResult.getBoundingClientRect();
+          burst(window.innerWidth / 2, rect.top + 50, 30, 'bat');
+          logHistory('🃏', 'Drew "' + escapeHtml(f.title) + '"');
+          fortuneResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 550);
+      }
+      fortuneAgainBtn.addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        fortuneResult.classList.remove('show');
+        buildTarotRow();
+      });
+      buildTarotRow();
+
+      /* hook history logging into the existing matchmaker result */
+      matchBtn.addEventListener('click', () => {
+        const n1 = (name1El.value.trim() || 'MysteryChatter1');
+        const n2 = (name2El.value.trim() || 'MysteryChatter2');
+        setTimeout(() => {
+          const scoreText = scoreReel.textContent;
+          logHistory('🦇', 'Matched <b>' + escapeHtml(n1) + '</b> + <b>' + escapeHtml(n2) + '</b> &mdash; ' + scoreText + '%');
+        }, 1300);
+      });
+
+    })();
+  </script>
+</body>
+
+</html>
