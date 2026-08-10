@@ -1168,6 +1168,316 @@
       animation: batflap 2.4s ease-in-out infinite;
     }
 
+    /* ---------- hot seat case opening ---------- */
+    .case-subtabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .case-subtab {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--ink-dim);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .case-subtab:hover {
+      color: var(--ink);
+      border-color: rgba(180, 139, 255, 0.4);
+    }
+
+    .case-subtab.active {
+      color: var(--ink);
+      border-color: var(--pink);
+      background: rgba(168, 85, 247, 0.14);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .case-rarity-key {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      font-size: 10.5px;
+      letter-spacing: .3px;
+    }
+
+    .rk {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--ink-dim);
+    }
+
+    .rk::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .rk-common::before {
+      background: #9483b8;
+      box-shadow: 0 0 6px rgba(148, 131, 184, .7);
+    }
+
+    .rk-rare::before {
+      background: #4da6ff;
+      box-shadow: 0 0 6px rgba(77, 166, 255, .8);
+    }
+
+    .rk-epic::before {
+      background: #a855f7;
+      box-shadow: 0 0 6px rgba(168, 85, 247, .9);
+    }
+
+    .rk-legendary::before {
+      background: #ffd35c;
+      box-shadow: 0 0 8px rgba(255, 211, 92, 1);
+    }
+
+    .case-stage {
+      position: relative;
+      margin: 0 auto;
+      max-width: 640px;
+      height: 130px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.2));
+      border: 1px solid var(--line);
+      overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .case-viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .case-strip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      will-change: transform;
+    }
+
+    .case-item {
+      width: 104px;
+      height: 104px;
+      flex-shrink: 0;
+      margin: 0 6px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 6px;
+      background: linear-gradient(155deg, #1c1030, #0e081b);
+      border: 2px solid rgba(148, 131, 184, 0.35);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--ink-dim);
+      line-height: 1.25;
+      overflow: hidden;
+    }
+
+    .case-item .ci-emoji {
+      font-size: 26px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.5));
+    }
+
+    .case-item .ci-rarity {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      letter-spacing: 0.5px;
+      opacity: 0.7;
+    }
+
+    .case-item.opening {
+      animation: caseItemPop .55s cubic-bezier(.2, 1.6, .3, 1);
+      z-index: 5;
+    }
+
+    @keyframes caseItemPop {
+      0% {
+        transform: scale(1);
+      }
+
+      35% {
+        transform: scale(1.28);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.55);
+      }
+
+      65% {
+        transform: scale(0.94);
+      }
+
+      100% {
+        transform: scale(1.08);
+      }
+    }
+
+    .case-item.rare {
+      border-color: #4da6ff;
+      box-shadow: 0 0 14px rgba(77, 166, 255, 0.35);
+    }
+
+    .case-item.epic {
+      border-color: #a855f7;
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.45);
+    }
+
+    .case-item.legendary {
+      border-color: #ffd35c;
+      background: linear-gradient(155deg, #2b220a, #1a1406);
+      box-shadow: 0 0 22px rgba(255, 211, 92, 0.55);
+    }
+
+    .case-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, var(--pink), var(--gold));
+      box-shadow: 0 0 12px rgba(233, 213, 255, 0.9);
+      z-index: 4;
+    }
+
+    .case-marker::before,
+    .case-marker::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+    }
+
+    .case-marker::before {
+      top: -1px;
+      border-top: 8px solid var(--gold);
+    }
+
+    .case-marker::after {
+      bottom: -1px;
+      border-bottom: 8px solid var(--gold);
+    }
+
+    .case-edge-l,
+    .case-edge-r {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .case-edge-l {
+      left: 0;
+      background: linear-gradient(90deg, var(--bg-0), transparent);
+    }
+
+    .case-edge-r {
+      right: 0;
+      background: linear-gradient(270deg, var(--bg-0), transparent);
+    }
+
+    .case-flash {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9), transparent 65%);
+      opacity: 0;
+    }
+
+    .case-flash.fire {
+      animation: caseFlashPulse .6s ease-out;
+    }
+
+    @keyframes caseFlashPulse {
+      0% {
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .case-stage.opened .case-marker {
+      animation: caseMarkerFlash .6s ease-out;
+    }
+
+    @keyframes caseMarkerFlash {
+      0% {
+        box-shadow: 0 0 12px rgba(233, 213, 255, 0.9);
+      }
+
+      30% {
+        box-shadow: 0 0 32px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 211, 92, 0.9);
+      }
+
+      100% {
+        box-shadow: 0 0 12px rgba(233, 213, 255, 0.9);
+      }
+    }
+
+    .case-rarity-tag {
+      display: inline-block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      color: #0a0512;
+      background: var(--ink-dim);
+    }
+
+    .case-rarity-tag.common {
+      background: #9483b8;
+    }
+
+    .case-rarity-tag.rare {
+      background: #4da6ff;
+      box-shadow: 0 0 14px rgba(77, 166, 255, 0.6);
+    }
+
+    .case-rarity-tag.epic {
+      background: #a855f7;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.6);
+    }
+
+    .case-rarity-tag.legendary {
+      background: linear-gradient(120deg, #ffd35c, #ff9f4d);
+      box-shadow: 0 0 18px rgba(255, 211, 92, 0.75);
+    }
+
     /* ---------- history log ---------- */
     .history-section {
       margin-top: 40px;
@@ -1376,6 +1686,9 @@
       </button>
       <button class="mode-tab" data-mode="fortune" role="tab" aria-selected="false">
         <span class="mode-tab-ico">🃏</span><span>Bat Fortune</span>
+      </button>
+      <button class="mode-tab" data-mode="hotseat" role="tab" aria-selected="false">
+        <span class="mode-tab-ico">🎰</span><span>Hot Seat</span>
       </button>
     </div>
 
@@ -1592,6 +1905,53 @@
           <div class="ship-name" id="fortuneTitle">???</div>
           <div class="status-desc" id="fortuneLine" style="font-size:15px;max-width:520px;">&nbsp;</div>
           <button class="again-btn" id="fortuneAgainBtn">🔁 Draw Again</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mode-panel" id="panel-hotseat">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">THE HOT <span>SEAT</span></h2>
+      <p class="card-sub">Open the case. Whatever lands, you do it. No skipping.</p>
+
+      <div class="case-subtabs" id="caseSubtabs" role="tablist">
+        <button class="case-subtab active" data-case="truth" role="tab" aria-selected="true">👁️ Truth</button>
+        <button class="case-subtab" data-case="dare" role="tab" aria-selected="false">🔥 Dare</button>
+        <button class="case-subtab" data-case="chaos" role="tab" aria-selected="false">🦇 Chaos Mix</button>
+      </div>
+
+      <div class="case-rarity-key">
+        <span class="rk rk-common">Common</span>
+        <span class="rk rk-rare">Rare</span>
+        <span class="rk rk-epic">Epic</span>
+        <span class="rk rk-legendary">Legendary</span>
+      </div>
+
+      <div class="case-stage" id="caseStage">
+        <div class="case-marker"></div>
+        <div class="case-viewport">
+          <div class="case-strip" id="caseStrip"></div>
+        </div>
+        <div class="case-edge-l"></div>
+        <div class="case-edge-r"></div>
+        <div class="case-flash" id="caseFlash"></div>
+      </div>
+
+      <div class="cta-row">
+        <button class="match-btn" id="caseOpenBtn">OPEN CASE 🎰</button>
+      </div>
+
+      <div class="result" id="caseResult">
+        <div class="result-inner">
+          <img class="result-sticker" id="caseSticker" src="stickers/mindblow-removebg-preview.png" alt=""
+            loading="lazy">
+          <div class="case-rarity-tag" id="caseRarityTag">RARE</div>
+          <div class="ship-name" id="caseTitle">???</div>
+          <div class="status-desc" id="caseLine" style="font-size:15px;max-width:520px;">&nbsp;</div>
+          <button class="again-btn" id="caseAgainBtn">🔁 Open Another</button>
         </div>
       </div>
     </div>
@@ -2555,6 +2915,257 @@
         buildTarotRow();
       });
       buildTarotRow();
+
+      /* ============ HOT SEAT (CS2-style case opening) ============ */
+      const caseStage = document.getElementById('caseStage');
+      const caseFlash = document.getElementById('caseFlash');
+      const caseStrip = document.getElementById('caseStrip');
+      const caseOpenBtn = document.getElementById('caseOpenBtn');
+      const caseResult = document.getElementById('caseResult');
+      const caseSticker = document.getElementById('caseSticker');
+      const caseRarityTag = document.getElementById('caseRarityTag');
+      const caseTitle = document.getElementById('caseTitle');
+      const caseLine = document.getElementById('caseLine');
+      const caseAgainBtn = document.getElementById('caseAgainBtn');
+      const caseSubtabs = document.querySelectorAll('.case-subtab');
+
+      // rarity weights mirror CS2 drop odds: common is most likely, legendary is a real moment
+      const RARITY_WEIGHTS = { common: 60, rare: 25, epic: 12, legendary: 3 };
+      const RARITY_EMOJI = { common: '👁️', rare: '🔥', epic: '⚡', legendary: '👑' };
+      const RARITY_STICKERS = {
+        common: ['nice-removebg-preview.png', 'cool-removebg-preview.png', 'hi-removebg-preview.png'],
+        rare: ['gg-removebg-preview.png', 'sip-removebg-preview.png', 'thanks-removebg-preview.png'],
+        epic: ['hype-removebg-preview.png', 'rich-removebg-preview.png', 'love-removebg-preview.png'],
+        legendary: ['mindblow-removebg-preview.png', 'rage.png', 'cheers-removebg-preview.png'],
+      };
+
+      const TRUTH_PROMPTS = [
+        { r: 'common', t: "What's the most embarrassing thing in your search history this week?" },
+        { r: 'common', t: "What's a hot take you're too scared to post on main?" },
+        { r: 'common', t: "What's the pettiest reason you've ever rage quit?" },
+        { r: 'common', t: "What username did you have as a kid that you're ashamed of now?" },
+        { r: 'common', t: "What's the worst gift you've ever received and pretended to like?" },
+        { r: 'common', t: "What's a show you pretend to have watched but never actually finished?" },
+        { r: 'common', t: "What's the dumbest thing you've ever bought on impulse?" },
+        { r: 'common', t: "What's your most unpopular food opinion?" },
+        { r: 'common', t: "What app do you spend way too much time on?" },
+        { r: 'common', t: "What's a lie you told as a kid that somehow worked?" },
+        { r: 'common', t: "What's the last thing you Googled at 3am?" },
+        { r: 'common', t: "What's a trend you were embarrassingly late to?" },
+        { r: 'common', t: "What's your most delulu belief about yourself?" },
+        { r: 'common', t: "What's a red flag in yourself you've just accepted at this point?" },
+        { r: 'common', t: "What's the most 'ick' thing someone's ever done in front of you?" },
+        { r: 'common', t: "What's a song you're embarrassed you know every word to?" },
+        { r: 'common', t: "What's your go-to excuse for being late?" },
+        { r: 'common', t: "What's the weirdest thing you've eaten and actually liked?" },
+        { r: 'common', t: "What's a childhood fear you still low-key have?" },
+        { r: 'common', t: "What's your most used emoji and what does that say about you?" },
+        { r: 'common', t: "What's a conspiracy theory you kind of believe?" },
+        { r: 'common', t: "What's the corniest pickup line that's ever actually worked on you?" },
+        { r: 'rare', t: "What's the most toxic thing you've ever said in a game and gotten away with?" },
+        { r: 'rare', t: "What's a secret talent nobody in chat knows about?" },
+        { r: 'rare', t: "What's your most controversial gaming opinion?" },
+        { r: 'rare', t: "What's a fight you've had over something genuinely stupid?" },
+        { r: 'rare', t: "What's the cringiest message you've ever sent someone you liked?" },
+        { r: 'rare', t: "What's a habit of yours that everyone who knows you clowns you for?" },
+        { r: 'rare', t: "What's the last thing that made you rage quit, and be honest — was it your fault?" },
+        { r: 'rare', t: "What NPC or side character does your last ex remind you of?" },
+        { r: 'rare', t: "What's the most 'main character syndrome' thing you've ever done?" },
+        { r: 'rare', t: "What's an opinion you have that would get you cancelled in this chat?" },
+        { r: 'epic', t: "What's the most unhinged thing a stranger online has ever said to you?" },
+        { r: 'epic', t: "What's a secret you've never told anyone in this chat before?" },
+        { r: 'epic', t: "What's the real reason your last situationship ended?" },
+        { r: 'epic', t: "What's something you did for clout that you now regret?" },
+        { r: 'epic', t: "Type out, word for word, the last text you sent to your crush or ex." },
+        { r: 'epic', t: "What's the pettiest thing you've ever reported someone for online?" },
+        { r: 'legendary', t: "Screenshot your most recent search bar history (blur what you must) and describe it to chat." },
+        { r: 'legendary', t: "Describe, in detail, the most embarrassing thing currently in your camera roll — no showing it, just words." },
+        { r: 'legendary', t: "Tell chat your actual most unhinged 3am thought from this week." },
+      ];
+      const DARE_PROMPTS = [
+        { r: 'common', t: "Type your next 3 messages using only emotes, no words." },
+        { r: 'common', t: "Do your best impression of Batcy in the chat, text-only, for one message." },
+        { r: 'common', t: "Talk (type) in an accent of chat's choosing for your next 5 messages." },
+        { r: 'common', t: "Send a message using only Gen-Alpha brainrot slang, no normal words allowed." },
+        { r: 'common', t: "Type your next message entirely in lowercase with zero punctuation, like you don't care about anything." },
+        { r: 'common', t: "Reply to the next person in chat like you're their disappointed parent." },
+        { r: 'common', t: "Speak (type) only in questions for your next 3 messages." },
+        { r: 'common', t: "Try to make chat laugh in one message. No pressure." },
+        { r: 'common', t: "Compliment the most random person in chat right now, make it weirdly specific." },
+        { r: 'common', t: "Type your next message like you're a medieval knight." },
+        { r: 'common', t: "Send the most dramatic possible reaction to something totally normal happening on stream right now." },
+        { r: 'common', t: "Describe your current mood using only a video game genre." },
+        { r: 'rare', t: "Give chat a genuine, unfiltered hot take about the game currently on screen." },
+        { r: 'rare', t: "Roast yourself in chat for 3 messages straight, no holding back." },
+        { r: 'rare', t: "Let chat assign you a new nickname for the rest of the stream — you must use it every message." },
+        { r: 'rare', t: "Rate your own gaming skill out of 10, brutally honest, then defend it." },
+        { r: 'rare', t: "Write a one-line movie-trailer-style recap of what just happened on stream." },
+        { r: 'rare', t: "Admit the most 'try hard' thing you've done in a casual lobby recently." },
+        { r: 'rare', t: "Do a text-only freestyle rap, 4 lines, about tonight's stream." },
+        { r: 'epic', t: "Let the next 3 people in chat each give you one word — build a sentence out of all 3, out loud or typed." },
+        { r: 'epic', t: "Confess your most toxic gaming take with zero context, just drop it." },
+        { r: 'epic', t: "Type out your unfiltered honest opinion of the streamer's current gameplay, no sugarcoating." },
+        { r: 'epic', t: "Let chat pick a random word — you must work it into every message for the next 5 minutes." },
+        { r: 'legendary', t: "Whatever the next message in chat tells you to do (within reason), you actually do it." },
+        { r: 'legendary', t: "Host a 2-minute open floor where chat roasts you directly and you can't clap back." },
+        { r: 'legendary', t: "Let chat vote on a fake beef arc between you and another chatter for the rest of stream." },
+      ];
+      const CHAOS_PROMPTS = [
+        { r: 'common', t: "Rate the current stream out of 10, no explanation needed, just the number." },
+        { r: 'common', t: "What's the most 'npc' thing you've done this week?" },
+        { r: 'common', t: "Describe Batcy's stream in exactly 3 words." },
+        { r: 'common', t: "What's your most mid opinion that you will still defend to the death?" },
+        { r: 'common', t: "If this chat was a group chat name, what would it be called?" },
+        { r: 'common', t: "What's the most unserious thing you believe with your whole chest?" },
+        { r: 'rare', t: "Confess the pettiest thing you've ever done out of spite." },
+        { r: 'rare', t: "Tell chat about the worst teammate you've ever had, no names needed." },
+        { r: 'rare', t: "What's a hill you will die on that literally nobody else agrees with?" },
+        { r: 'rare', t: "Give chat your honest tier list placement of yourself as a chatter: S, A, B, C, or L." },
+        { r: 'epic', t: "Chat picks another chatter — you two now have a fake rivalry arc for the rest of stream." },
+        { r: 'epic', t: "Confess your most unhinged opinion about this exact game genre." },
+        { r: 'epic', t: "Pitch chat a completely unhinged idea for tonight's stream title." },
+        { r: 'legendary', t: "Whatever the last 3 messages in chat say to do, you do it. All of it." },
+        { r: 'legendary', t: "Chat votes: pull again from Truth or Dare instead, no re-roll allowed either way." },
+      ];
+      const CASE_POOLS = { truth: TRUTH_PROMPTS, dare: DARE_PROMPTS, chaos: CHAOS_PROMPTS.concat(TRUTH_PROMPTS.slice(0, 8), DARE_PROMPTS.slice(0, 8)) };
+
+      let caseCategory = 'truth';
+      let caseSpinning = false;
+
+      function weightedPick(pool) {
+        const total = pool.reduce((sum, p) => sum + RARITY_WEIGHTS[p.r], 0);
+        let roll = Math.random() * total;
+        for (const item of pool) {
+          roll -= RARITY_WEIGHTS[item.r];
+          if (roll <= 0) return item;
+        }
+        return pool[pool.length - 1];
+      }
+
+      const ITEM_W = 116; // width + margins of .case-item
+      function renderCaseStrip(finalItem) {
+        const pool = CASE_POOLS[caseCategory];
+        // build a long filler strip so the scroll has plenty of runway, then force the final item near the end
+        const stripLen = 60;
+        const items = [];
+        for (let i = 0; i < stripLen; i++) items.push(weightedPick(pool));
+        const landingIndex = stripLen - 6;
+        if (finalItem) items[landingIndex] = finalItem;
+
+        caseStrip.innerHTML = '';
+        items.forEach((item, i) => {
+          const el = document.createElement('div');
+          el.className = 'case-item ' + item.r;
+          el.dataset.idx = i;
+          // prompt text stays hidden until this exact card lands under the marker and gets opened
+          el.innerHTML = '<span class="ci-emoji">' + RARITY_EMOJI[item.r] + '</span><span class="ci-rarity">' + item.r.toUpperCase() + '</span>';
+          caseStrip.appendChild(el);
+        });
+        return landingIndex;
+      }
+
+      // idle preview strip so the case isn't empty before the first open
+      renderCaseStrip(null);
+
+      caseSubtabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          if (caseSpinning) return;
+          caseCategory = tab.dataset.case;
+          caseSubtabs.forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+          caseResult.classList.remove('show');
+          caseStage.classList.remove('opened');
+          caseStrip.style.transition = 'none';
+          caseStrip.style.transform = 'translateX(0px)';
+          renderCaseStrip(null);
+        });
+      });
+
+      caseOpenBtn.addEventListener('click', (evt) => {
+        ensureAudio();
+        if (caseSpinning) return;
+        caseSpinning = true;
+        caseOpenBtn.disabled = true;
+        caseResult.classList.remove('show');
+        rippleAt(caseOpenBtn, evt);
+        sfxClick();
+        sfxWhoosh();
+
+        const pool = CASE_POOLS[caseCategory];
+        const winner = weightedPick(pool);
+        const landingIndex = renderCaseStrip(winner);
+
+        const viewportWidth = caseStrip.parentElement.clientWidth;
+        const jitter = (Math.random() - 0.5) * (ITEM_W * 0.55);
+        const targetX = -(landingIndex * ITEM_W + ITEM_W / 2 - viewportWidth / 2 + jitter);
+
+        caseStrip.style.transition = 'none';
+        caseStrip.style.transform = 'translateX(0px)';
+        void caseStrip.offsetWidth;
+
+        const dur = 5200;
+        caseStrip.style.transition = 'transform ' + dur + 'ms cubic-bezier(0.09, 0.8, 0.1, 1)';
+        caseStrip.style.transform = 'translateX(' + targetX + 'px)';
+
+        let tickTimer = null;
+        let elapsed = 0;
+        const tickInterval = 70;
+        tickTimer = setInterval(() => {
+          elapsed += tickInterval;
+          if (elapsed < dur - 300) tone(180 + Math.random() * 120, 0.03, 'square', 0, 0.025);
+          else clearInterval(tickTimer);
+        }, tickInterval);
+
+        setTimeout(() => {
+          clearInterval(tickTimer);
+
+          // the strip has stopped moving but the prize is still face-down under the marker —
+          // pop the landed card + flash the case before anything is revealed
+          const landedEl = caseStrip.children[landingIndex];
+          if (landedEl) landedEl.classList.add('opening');
+          caseStage.classList.add('opened');
+          caseFlash.classList.remove('fire');
+          void caseFlash.offsetWidth;
+          caseFlash.classList.add('fire');
+          tone(880, 0.18, 'square', 0, 0.07);
+          tone(1320, 0.22, 'square', 0.06, 0.06);
+
+          setTimeout(() => {
+            caseSpinning = false;
+            caseOpenBtn.disabled = false;
+            caseStage.classList.remove('opened');
+
+            caseRarityTag.textContent = winner.r.toUpperCase();
+            caseRarityTag.className = 'case-rarity-tag ' + winner.r;
+            caseTitle.textContent = RARITY_EMOJI[winner.r] + ' ' + winner.r.toUpperCase() + ' PULL';
+            caseLine.textContent = winner.t;
+            caseSticker.src = 'stickers/' + pick(RARITY_STICKERS[winner.r]);
+            caseSticker.style.animation = 'none';
+            void caseSticker.offsetWidth;
+            caseSticker.style.animation = '';
+
+            caseResult.classList.add('show');
+            if (winner.r === 'legendary') {
+              sfxFanfare();
+              const rect = caseResult.getBoundingClientRect();
+              burst(window.innerWidth / 2, rect.top + 60, 60, 'bat');
+            } else if (winner.r === 'epic') {
+              sfxFanfare();
+              const rect = caseResult.getBoundingClientRect();
+              burst(window.innerWidth / 2, rect.top + 60, 34, 'bat');
+            } else {
+              sfxChime();
+            }
+            logHistory(RARITY_EMOJI[winner.r], '[' + caseCategory.toUpperCase() + ' · ' + winner.r.toUpperCase() + '] ' + escapeHtml(winner.t));
+            caseResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 620);
+        }, dur + 80);
+      });
+
+      caseAgainBtn.addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        caseResult.classList.remove('show');
+      });
 
       /* hook history logging into the existing matchmaker result */
       matchBtn.addEventListener('click', () => {
