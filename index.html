@@ -280,6 +280,45 @@
       }
     }
 
+    .chat-link {
+      cursor: default;
+    }
+
+    .dot.warn {
+      background: #ffb347;
+      box-shadow: 0 0 8px rgba(255, 179, 71, 0.8);
+    }
+
+    .chat-hint {
+      font-size: 11.5px;
+      color: var(--ink-dim);
+      margin-top: 10px;
+    }
+
+    .chat-hint b {
+      color: var(--pink-soft);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      letter-spacing: .5px;
+    }
+
+    .chatter-pick {
+      margin-left: auto;
+      padding: 5px 9px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .slot.chat-filled {
+      animation: slotFlash .7s ease-out;
+    }
+
+    @keyframes slotFlash {
+      30% {
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.35), 0 0 26px rgba(168, 85, 247, 0.6);
+      }
+    }
+
     .socials {
       display: flex;
       gap: 8px;
@@ -1669,6 +1708,22 @@
       opacity: .4;
     }
 
+    .quiz-opt .qo-votes {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--pink-soft);
+      white-space: nowrap;
+    }
+
+    .quiz-feed {
+      max-width: 620px;
+      margin: 12px auto 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ink-dim);
+      min-height: 1.4em;
+    }
+
     .quiz-hud {
       max-width: 620px;
       margin: 18px auto 0;
@@ -1952,6 +2007,10 @@
           <span class="dot on"></span>
           <span>LIVE ON KICK</span>
         </a>
+        <div class="live-pill chat-link" id="chatLink" title="Reads Kick chat live so the games can use real chatter names">
+          <span class="dot warn" id="chatLinkDot"></span>
+          <span id="chatLinkText">CHAT CONNECTING…</span>
+        </div>
         <div class="socials">
           <a class="social-btn" href="https://kick.com/damnbatcy" target="_blank" rel="noopener" title="Kick">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -2028,6 +2087,7 @@
           <div class="avatar-row">
             <div class="avatar" id="ava1">?</div>
             <div class="avatar-hint">chat participant</div>
+            <button class="ghost-btn chatter-pick" data-target="name1">🎲 Chatter</button>
           </div>
         </div>
 
@@ -2041,6 +2101,7 @@
           <div class="avatar-row">
             <div class="avatar" id="ava2">?</div>
             <div class="avatar-hint">chat participant</div>
+            <button class="ghost-btn chatter-pick" data-target="name2">🎲 Chatter</button>
           </div>
         </div>
       </div>
@@ -2048,6 +2109,7 @@
       <div class="cta-row">
         <button class="match-btn" id="matchBtn">MATCH 'EM UP! 🦇</button>
       </div>
+      <div class="chat-hint" style="text-align:center;">💬 Chat can type <b>!ship</b> or <b>!ship @name</b> to fill the names</div>
 
       <div class="result" id="result">
         <div class="result-inner">
@@ -2091,9 +2153,11 @@
               placeholder="One name per line...&#10;luna_bee&#10;xx_starr&#10;moonlit_kay"></textarea>
             <div class="wheel-controls">
               <button class="ghost-btn wheelAddSample">+ Sample names</button>
+              <button class="ghost-btn wheelAddChat">💬 Chatters</button>
               <button class="ghost-btn wheelClear">Clear</button>
             </div>
             <div class="wheel-count">0 names loaded</div>
+            <div class="chat-hint">💬 Chat can type <b>!join</b> to hop on the wheel</div>
           </div>
         </div>
         <div class="result wheelResult">
@@ -2121,9 +2185,11 @@
               placeholder="One name per line...&#10;xX_PogChamp_Xx&#10;lurker_supreme&#10;bat_enjoyer42"></textarea>
             <div class="wheel-controls">
               <button class="ghost-btn wheelAddSample">+ Sample names</button>
+              <button class="ghost-btn wheelAddChat">💬 Chatters</button>
               <button class="ghost-btn wheelClear">Clear</button>
             </div>
             <div class="wheel-count">0 names loaded</div>
+            <div class="chat-hint">💬 Chat can type <b>!join</b> to hop on the wheel</div>
           </div>
         </div>
         <div class="result wheelResult">
@@ -2151,9 +2217,11 @@
               placeholder="One name per line...&#10;anyone_chat&#10;random_lurker&#10;bat_squad_99"></textarea>
             <div class="wheel-controls">
               <button class="ghost-btn wheelAddSample">+ Sample names</button>
+              <button class="ghost-btn wheelAddChat">💬 Chatters</button>
               <button class="ghost-btn wheelClear">Clear</button>
             </div>
             <div class="wheel-count">0 names loaded</div>
+            <div class="chat-hint">💬 Chat can type <b>!join</b> to hop on the wheel</div>
           </div>
         </div>
         <div class="result wheelResult">
@@ -2184,6 +2252,7 @@
           <div class="avatar-row">
             <div class="avatar" id="avaRate">?</div>
             <div class="avatar-hint">about to be judged</div>
+            <button class="ghost-btn chatter-pick" data-target="rateName">🎲 Chatter</button>
           </div>
         </div>
 
@@ -2196,6 +2265,7 @@
       <div class="cta-row">
         <button class="match-btn" id="rateBtn">JUDGE THEM 🦇</button>
       </div>
+      <div class="chat-hint" style="text-align:center;">💬 Chat can type <b>!rateme</b>, <b>!roastme</b> or <b>!hypeme</b></div>
 
       <div class="result" id="rateResult">
         <div class="result-inner">
@@ -2315,6 +2385,7 @@
       </div>
 
       <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-feed" id="quizFeed"></div>
 
       <div class="quiz-hud">
         <div class="quiz-worth pixel">WORTH <b id="quizWorth">100</b> PTS</div>
@@ -3890,7 +3961,7 @@
           const btn = document.createElement('button');
           btn.className = 'quiz-opt';
           btn.disabled = true;
-          btn.innerHTML = '<span class="qo-letter">' + QUIZ_LETTERS[i] + '</span><span>' + escapeHtml(text) + '</span>';
+          btn.innerHTML = '<span class="qo-letter">' + QUIZ_LETTERS[i] + '</span><span>' + escapeHtml(text) + '</span><span class="qo-votes"></span>';
           btn.addEventListener('click', () => pickQuizAnswer(i));
           quizOptionsEl.appendChild(btn);
         });
@@ -3949,6 +4020,7 @@
         avaQuiz.textContent = '?';
         quizState = 'running';
         setQuizPanels('running');
+        resetQuizVotes();
         quizStart = performance.now();
         quizLastSec = -1;
         requestAnimationFrame(quizTick);
@@ -4055,6 +4127,7 @@
 
         saveQuizScores();
         renderQuizScores();
+        renderQuizFeed();
         logHistory('🧠', logText);
         quizResult.classList.add('show');
         setTimeout(() => quizResult.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
@@ -4112,6 +4185,227 @@
 
       renderQuizScores();
 
+
+      /* ============ KICK CHAT LINK (reads live chat over Kick's public Pusher socket) ============ */
+      // unofficial endpoint — if Kick rotates the Pusher key or cluster, update KICK_SOCKET_URL
+      const KICK_CHANNEL = 'damnbatcy';
+      const KICK_CHATROOM_ID = 44755730; // fallback if the channel lookup fails
+      const KICK_SOCKET_URL = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=8.4.0&flash=false';
+      const CHAT_ACTIVE_MS = 20 * 60 * 1000;
+      const CHAT_IGNORED = new Set([KICK_CHANNEL, 'botrix', 'kickbot', 'streamelements', 'nightbot', 'fossabot', 'moobot', 'sery_bot']);
+      const WHEEL_MAX_NAMES = 24;
+
+      const chatLinkDot = document.getElementById('chatLinkDot');
+      const chatLinkText = document.getElementById('chatLinkText');
+      const quizFeed = document.getElementById('quizFeed');
+      const chatters = new Map(); // lowercase username -> { name, last }
+      let chatConnected = false;
+      let chatRetryMs = 3000;
+
+      function activeChatters() {
+        const cutoff = Date.now() - CHAT_ACTIVE_MS;
+        return [...chatters.values()].filter(c => c.last >= cutoff).sort((a, b) => b.last - a.last).map(c => c.name);
+      }
+      function randomChatter(exclude) {
+        const ex = exclude.map(s => s.trim().toLowerCase());
+        const pool = activeChatters().filter(n => !ex.includes(n.toLowerCase()));
+        return pool.length ? pick(pool) : null;
+      }
+      function renderChatLink() {
+        chatLinkDot.classList.toggle('on', chatConnected);
+        chatLinkDot.classList.toggle('warn', !chatConnected);
+        const n = activeChatters().length;
+        chatLinkText.textContent = chatConnected ? '💬 ' + n + ' CHATTER' + (n === 1 ? '' : 'S') : 'CHAT RECONNECTING…';
+      }
+      setInterval(renderChatLink, 30000);
+
+      async function resolveChatroomId() {
+        try {
+          const res = await fetch('https://kick.com/api/v2/channels/' + KICK_CHANNEL, { headers: { Accept: 'application/json' } });
+          const j = await res.json();
+          if (j && j.chatroom && j.chatroom.id) return j.chatroom.id;
+        } catch (e) { }
+        return KICK_CHATROOM_ID;
+      }
+
+      function scheduleChatRetry() {
+        setTimeout(connectKickChat, chatRetryMs);
+        chatRetryMs = Math.min(chatRetryMs * 2, 30000);
+      }
+
+      async function connectKickChat() {
+        const roomId = await resolveChatroomId();
+        let ws;
+        try { ws = new WebSocket(KICK_SOCKET_URL); } catch (e) { scheduleChatRetry(); return; }
+        const pingTimer = setInterval(() => {
+          if (ws.readyState === 1) ws.send(JSON.stringify({ event: 'pusher:ping', data: {} }));
+        }, 60000);
+        ws.onmessage = (e) => {
+          let msg;
+          try { msg = JSON.parse(e.data); } catch (err) { return; }
+          if (msg.event === 'pusher:connection_established') {
+            ws.send(JSON.stringify({ event: 'pusher:subscribe', data: { auth: '', channel: 'chatrooms.' + roomId + '.v2' } }));
+          } else if (msg.event === 'pusher_internal:subscription_succeeded') {
+            chatConnected = true;
+            chatRetryMs = 3000;
+            renderChatLink();
+            renderQuizFeed();
+          } else if (msg.event === 'pusher:ping') {
+            ws.send(JSON.stringify({ event: 'pusher:pong', data: {} }));
+          } else if (msg.event === 'App\\Events\\ChatMessageEvent') {
+            let data;
+            try { data = JSON.parse(msg.data); } catch (err) { return; }
+            if (data && data.sender && data.sender.username) handleChatMessage(data.sender.username, String(data.content || ''));
+          }
+        };
+        ws.onerror = () => ws.close();
+        ws.onclose = () => {
+          clearInterval(pingTimer);
+          chatConnected = false;
+          renderChatLink();
+          renderQuizFeed();
+          scheduleChatRetry();
+        };
+      }
+
+      function handleChatMessage(name, text) {
+        const key = name.toLowerCase();
+        // the broadcaster plays through the buttons, and bots aren't real chatters
+        if (CHAT_IGNORED.has(key)) return;
+        chatters.set(key, { name, last: Date.now() });
+        renderChatLink();
+        const content = text.trim();
+        if (quizState === 'running') handleQuizVote(name, content);
+        if (content[0] === '!') handleChatCommand(name, content);
+      }
+
+      function panelActive(mode) {
+        return document.getElementById('panel-' + mode).classList.contains('active');
+      }
+
+      function setInputFromChat(el, value) {
+        el.value = value.slice(0, el.maxLength > 0 ? el.maxLength : 40);
+        el.dispatchEvent(new Event('input'));
+        const slot = el.closest('.slot');
+        if (slot) {
+          slot.classList.remove('chat-filled');
+          void slot.offsetWidth;
+          slot.classList.add('chat-filled');
+        }
+      }
+
+      function flashBtnText(btn, text) {
+        if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+        btn.textContent = text;
+        clearTimeout(btn._flashTimer);
+        btn._flashTimer = setTimeout(() => { btn.textContent = btn.dataset.label; }, 1400);
+      }
+
+      function addWheelNames(inst, names) {
+        const ta = inst.querySelector('.wheelNames');
+        const current = ta.value.split('\n').map(s => s.trim()).filter(Boolean);
+        const seen = new Set(current.map(s => s.toLowerCase()));
+        let added = 0;
+        names.forEach(n => {
+          if (current.length >= WHEEL_MAX_NAMES || seen.has(n.toLowerCase())) return;
+          current.push(n);
+          seen.add(n.toLowerCase());
+          added++;
+        });
+        if (added) {
+          ta.value = current.join('\n');
+          ta.dispatchEvent(new Event('input'));
+        }
+        return added;
+      }
+
+      function handleChatCommand(name, content) {
+        const parts = content.split(/\s+/);
+        const cmd = parts[0].toLowerCase();
+        const arg = (parts[1] || '').replace(/^@/, '');
+
+        if (cmd === '!join' && panelActive('wheel')) {
+          const inst = document.querySelector('.wheel-instance.active');
+          if (inst && !inst.querySelector('.spinBtn').disabled && addWheelNames(inst, [name])) tone(660, 0.05, 'sine', 0, 0.03);
+        } else if (cmd === '!ship' && panelActive('match') && !matchBtn.disabled) {
+          const partner = arg || randomChatter([name]) || 'MysteryChatter';
+          setInputFromChat(name1El, name);
+          setInputFromChat(name2El, partner);
+          tone(660, 0.06, 'sine', 0, 0.04);
+        } else if ((cmd === '!rateme' || cmd === '!roastme' || cmd === '!hypeme') && panelActive('rate') && !rateBtn.disabled) {
+          setInputFromChat(rateNameEl, name);
+          if (cmd === '!roastme') roastBtn.click();
+          else if (cmd === '!hypeme') hypeBtn.click();
+          else tone(660, 0.06, 'sine', 0, 0.04);
+        }
+      }
+
+      /* ---- quiz: chat answers by typing A / B / C / D, first correct wins, one guess each ---- */
+      let quizVotes = new Map();
+      let quizVoteCounts = [0, 0, 0, 0];
+      let quizFeedItems = [];
+
+      function renderQuizFeed() {
+        if (quizFeedItems.length) quizFeed.textContent = quizFeedItems.slice(0, 6).join('  ·  ');
+        else if (chatConnected && quizState === 'running') quizFeed.textContent = '💬 Chat: type A, B, C or D — first right answer wins · one guess each';
+        else quizFeed.textContent = '';
+      }
+      function resetQuizVotes() {
+        quizVotes = new Map();
+        quizVoteCounts = [0, 0, 0, 0];
+        quizFeedItems = [];
+        renderQuizFeed();
+      }
+
+      function handleQuizVote(name, content) {
+        const m = content.match(/^([abcd])[).!]*$/i);
+        if (!m) return;
+        const key = name.toLowerCase();
+        if (quizVotes.has(key)) return;
+        const idx = QUIZ_LETTERS.indexOf(m[1].toUpperCase());
+        quizVotes.set(key, idx);
+        quizVoteCounts[idx]++;
+        const badge = quizOptionsEl.children[idx] && quizOptionsEl.children[idx].querySelector('.qo-votes');
+        if (badge) badge.textContent = '💬 ' + quizVoteCounts[idx];
+
+        if (idx === quizCurrent.correct) {
+          quizFeedItems.unshift('✅ ' + name + ' (' + QUIZ_LETTERS[idx] + ')');
+          renderQuizFeed();
+          quizLockedPts = quizPointsAt(quizProgress);
+          quizAnswerer = 'chat';
+          quizNameEl.value = name;
+          finishQuizRound('right', idx);
+        } else {
+          quizFeedItems.unshift('❌ ' + name + ' (' + QUIZ_LETTERS[idx] + ')');
+          renderQuizFeed();
+          tone(180, 0.05, 'square', 0, 0.03);
+        }
+      }
+
+      /* ---- "🎲 Chatter" buttons + wheel "💬 Chatters" buttons ---- */
+      document.querySelectorAll('.chatter-pick').forEach(btn => {
+        btn.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          const target = document.getElementById(btn.dataset.target);
+          const taken = btn.dataset.target === 'rateName' ? [] : [name1El.value, name2El.value];
+          const who = randomChatter(taken);
+          if (!who) { flashBtnText(btn, chatConnected ? 'nobody yet 😴' : 'chat offline'); return; }
+          setInputFromChat(target, who);
+        });
+      });
+
+      document.querySelectorAll('.wheelAddChat').forEach(btn => {
+        btn.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          const inst = btn.closest('.wheel-instance');
+          const names = activeChatters();
+          if (!names.length) { flashBtnText(btn, chatConnected ? 'nobody yet 😴' : 'chat offline'); return; }
+          const added = addWheelNames(inst, names);
+          flashBtnText(btn, added ? '+' + added + ' added' : 'all in already');
+        });
+      });
+
+      connectKickChat();
 
       /* hook history logging into the existing matchmaker result */
       matchBtn.addEventListener('click', () => {
