@@ -1478,6 +1478,323 @@
       box-shadow: 0 0 18px rgba(255, 211, 92, 0.75);
     }
 
+    /* ---------- big brain battle (trivia race) ---------- */
+    [hidden] {
+      display: none !important;
+    }
+
+    .quiz-scoreboard {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+      max-width: 460px;
+      margin: 0 auto 22px;
+    }
+
+    .qs-side {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 10px;
+      transition: .25s ease;
+    }
+
+    .qs-side.batcy {
+      border-color: rgba(168, 85, 247, 0.45);
+    }
+
+    .qs-side.chat {
+      border-color: rgba(124, 43, 245, 0.45);
+    }
+
+    .qs-side.bump {
+      animation: qsBump .5s cubic-bezier(.2, 1.6, .3, 1);
+    }
+
+    @keyframes qsBump {
+      40% {
+        transform: scale(1.12);
+        box-shadow: 0 0 26px rgba(168, 85, 247, 0.6);
+      }
+    }
+
+    .qs-label {
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--ink-dim);
+      margin-bottom: 8px;
+    }
+
+    .qs-score {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(18px, 4.4vw, 26px);
+      color: var(--gold);
+      text-shadow: 0 0 14px rgba(233, 213, 255, 0.5);
+    }
+
+    .quiz-box {
+      max-width: 620px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 20px 24px;
+      text-align: center;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .quiz-box.pop {
+      animation: stickerPop .45s cubic-bezier(.2, 1.4, .4, 1);
+    }
+
+    .quiz-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-cat {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      letter-spacing: 1px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(168, 85, 247, 0.16);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      color: var(--pink-soft);
+    }
+
+    .quiz-num {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      letter-spacing: 1px;
+      color: var(--ink-dim);
+    }
+
+    .quiz-q {
+      font-size: clamp(17px, 3.6vw, 22px);
+      font-weight: 700;
+      line-height: 1.35;
+      min-height: 2.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 620px;
+      margin: 14px auto 0;
+    }
+
+    @media (max-width:560px) {
+      .quiz-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quiz-opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 14.5px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      transition: .2s ease;
+    }
+
+    .quiz-opt:disabled {
+      color: var(--ink);
+      cursor: default;
+    }
+
+    .quiz-opt .qo-letter {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0a0512;
+      background: linear-gradient(145deg, var(--violet), var(--violet-soft));
+    }
+
+    .quiz-options.pickable .quiz-opt {
+      cursor: pointer;
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+    }
+
+    .quiz-options.pickable .quiz-opt:hover {
+      background: rgba(168, 85, 247, 0.16);
+      border-color: var(--pink);
+      transform: translateY(-1px);
+    }
+
+    .quiz-opt.correct {
+      border-color: #3ddc84;
+      background: rgba(61, 220, 132, 0.14);
+      box-shadow: 0 0 18px rgba(61, 220, 132, 0.35);
+    }
+
+    .quiz-opt.correct .qo-letter {
+      background: #3ddc84;
+    }
+
+    .quiz-opt.wrong {
+      border-color: var(--danger);
+      background: rgba(255, 77, 77, 0.12);
+    }
+
+    .quiz-opt.wrong .qo-letter {
+      background: var(--danger);
+    }
+
+    .quiz-opt.dim {
+      opacity: .4;
+    }
+
+    .quiz-hud {
+      max-width: 620px;
+      margin: 18px auto 0;
+      text-align: center;
+    }
+
+    .quiz-worth {
+      font-size: 13px;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .quiz-worth b {
+      font-size: 20px;
+      color: var(--pink-soft);
+      text-shadow: 0 0 12px rgba(168, 85, 247, 0.8);
+    }
+
+    .quiz-hud .meter {
+      width: 100%;
+      margin: 10px 0 0;
+    }
+
+    .quiz-hud .meter-fill {
+      transition: none;
+      width: 100%;
+    }
+
+    .quiz-hud .meter-fill.hurry {
+      background: linear-gradient(90deg, var(--danger), #ff9f4d);
+      box-shadow: 0 0 12px rgba(255, 77, 77, 0.7);
+    }
+
+    .quiz-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .match-btn.alt {
+      background: linear-gradient(120deg, var(--violet-soft), var(--violet) 55%, var(--pink));
+      background-size: 220% 220%;
+    }
+
+    .quiz-answering {
+      max-width: 420px;
+      margin: 24px auto 0;
+      text-align: center;
+    }
+
+    .quiz-hint {
+      color: var(--pink-soft);
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .quiz-answering .slot {
+      text-align: left;
+    }
+
+    .quiz-board {
+      margin-top: 30px;
+      border-top: 1px dashed var(--line);
+      padding-top: 20px;
+    }
+
+    .quiz-lb {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .quiz-lb li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .quiz-lb .lb-rank {
+      width: 26px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .quiz-lb .lb-name {
+      flex: 1;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .quiz-lb .lb-pts {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--gold);
+    }
+
+    .quiz-lb li:first-child {
+      border-color: rgba(255, 211, 92, 0.6);
+      box-shadow: 0 0 14px rgba(255, 211, 92, 0.2);
+    }
+
+    .quiz-lb li.quiz-lb-empty {
+      justify-content: center;
+      color: var(--ink-dim);
+      font-size: 12.5px;
+      border: none;
+      background: none;
+      box-shadow: none;
+    }
+
+
     /* ---------- history log ---------- */
     .history-section {
       margin-top: 40px;
@@ -1632,8 +1949,8 @@
       </div>
       <div class="status-social">
         <a class="live-pill" id="livePill" href="https://kick.com/damnbatcy" target="_blank" rel="noopener">
-          <span class="dot" id="liveDot"></span>
-          <span id="liveText">OFFLINE</span>
+          <span class="dot on"></span>
+          <span>LIVE ON KICK</span>
         </a>
         <div class="socials">
           <a class="social-btn" href="https://kick.com/damnbatcy" target="_blank" rel="noopener" title="Kick">
@@ -1670,7 +1987,7 @@
           d="M12 2c.6 1.1 1 2.1 1.1 3.1 2.6-1.7 5.4-2.4 8.4-2.1-1.4 1.3-2.2 2.6-2.6 4.1 1.9.9 3 2.3 3.1 4.4-1.6-.7-3-.9-4.4-.6.6 1.7-.1 3.2-1.4 4.5-.4-1.3-1-2.2-1.9-2.8.2 1.7-.3 3.1-1.5 4.3l-.7-2-.7 2c-1.2-1.2-1.7-2.6-1.5-4.3-.9.6-1.5 1.5-1.9 2.8-1.3-1.3-2-2.8-1.4-4.5-1.4-.3-2.8-.1-4.4.6.1-2.1 1.2-3.5 3.1-4.4-.4-1.5-1.2-2.8-2.6-4.1 3-.3 5.8.4 8.4 2.1C11 4.1 11.4 3.1 12 2Z" />
       </svg>
       <h1>THE BAT CAVE<br>OF CHAOS</h1>
-      <p>Four ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
+      <p>Six ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
       <img class="hero-sticker" src="stickers/hi-removebg-preview.png" alt="Batcy waving hi" loading="lazy">
     </section>
 
@@ -1689,6 +2006,9 @@
       </button>
       <button class="mode-tab" data-mode="hotseat" role="tab" aria-selected="false">
         <span class="mode-tab-ico">🎰</span><span>Hot Seat</span>
+      </button>
+      <button class="mode-tab" data-mode="quiz" role="tab" aria-selected="false">
+        <span class="mode-tab-ico">🧠</span><span>Brain Battle</span>
       </button>
     </div>
 
@@ -1953,6 +2273,97 @@
           <div class="status-desc" id="caseLine" style="font-size:15px;max-width:520px;">&nbsp;</div>
           <button class="again-btn" id="caseAgainBtn">🔁 Open Another</button>
         </div>
+      </div>
+    </div>
+
+    <div class="card mode-panel" id="panel-quiz">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">BIG BRAIN <span>BATTLE</span></h2>
+      <p class="card-sub">Trivia showdown. Batcy and chat race to answer &mdash; get it right to score, get it wrong and the
+        other side steals the points.</p>
+
+      <div class="quiz-scoreboard">
+        <div class="qs-side batcy" id="qsBatcySide">
+          <div class="qs-label pixel">BATCY</div>
+          <div class="qs-score" id="qsBatcy">0</div>
+        </div>
+        <div class="vs-bolt">VS</div>
+        <div class="qs-side chat" id="qsChatSide">
+          <div class="qs-label pixel">CHAT</div>
+          <div class="qs-score" id="qsChat">0</div>
+        </div>
+      </div>
+
+      <div class="case-subtabs" id="quizSubtabs" role="tablist">
+        <button class="case-subtab active" data-quiz="gaming" role="tab" aria-selected="true">🎮 Gaming</button>
+        <button class="case-subtab" data-quiz="general" role="tab" aria-selected="false">🌍 General</button>
+        <button class="case-subtab" data-quiz="tech" role="tab" aria-selected="false">💻 Tech</button>
+        <button class="case-subtab" data-quiz="science" role="tab" aria-selected="false">🔬 Science</button>
+        <button class="case-subtab" data-quiz="fun" role="tab" aria-selected="false">🤯 Fun Facts</button>
+        <button class="case-subtab" data-quiz="mix" role="tab" aria-selected="false">🦇 Mix</button>
+      </div>
+
+      <div class="quiz-box" id="quizBox">
+        <div class="quiz-meta">
+          <span class="quiz-cat" id="quizCat">🎮 GAMING</span>
+          <span class="quiz-num" id="quizNum">READY?</span>
+        </div>
+        <div class="quiz-q" id="quizQ">Pick a category and hit start. Fastest brain wins.</div>
+      </div>
+
+      <div class="quiz-options" id="quizOptions"></div>
+
+      <div class="quiz-hud">
+        <div class="quiz-worth pixel">WORTH <b id="quizWorth">100</b> PTS</div>
+        <div class="meter">
+          <div class="meter-fill" id="quizTimer"></div>
+        </div>
+      </div>
+
+      <div class="quiz-controls" id="quizIdle">
+        <button class="match-btn" id="quizStartBtn">START QUIZ 🧠</button>
+      </div>
+
+      <div class="quiz-controls" id="quizLive" hidden>
+        <button class="match-btn" id="quizBatcyBtn">🦇 BATCY ANSWERS</button>
+        <button class="match-btn alt" id="quizChatBtn">💬 CHAT ANSWERS</button>
+        <button class="ghost-btn" id="quizSkipBtn">⏭ Skip</button>
+      </div>
+
+      <div class="quiz-answering" id="quizAnswering" hidden>
+        <div class="quiz-hint" id="quizHint">👆 Click the answer Batcy gave</div>
+        <div class="slot p1" id="quizNameSlot">
+          <label class="pixel" for="quizName">WHO ANSWERED?</label>
+          <input id="quizName" type="text" maxlength="24" placeholder="chatter's username (optional)" autocomplete="off">
+          <div class="avatar-row">
+            <div class="avatar" id="avaQuiz">?</div>
+            <div class="avatar-hint">leave empty to credit all of chat</div>
+          </div>
+        </div>
+        <div class="quiz-controls" style="margin-top:14px;">
+          <button class="ghost-btn" id="quizCancelBtn">↩ False alarm</button>
+        </div>
+      </div>
+
+      <div class="result" id="quizResult">
+        <div class="result-inner">
+          <img class="result-sticker" id="quizSticker" src="stickers/mindblow-removebg-preview.png" alt="" loading="lazy">
+          <div class="case-rarity-tag" id="quizTag">CHAT +100</div>
+          <div class="ship-name" id="quizAnswer">???</div>
+          <div class="status-desc" id="quizLine" style="font-size:15px;max-width:520px;">&nbsp;</div>
+          <button class="again-btn" id="quizNextBtn">▶ Next Question</button>
+        </div>
+      </div>
+
+      <div class="quiz-board">
+        <div class="history-head">
+          <h3 class="pixel history-title">TOP BRAINS IN CHAT</h3>
+          <button class="ghost-btn" id="quizReset">Reset scores</button>
+        </div>
+        <ol class="quiz-lb" id="quizLb"></ol>
       </div>
     </div>
 
@@ -2268,16 +2679,6 @@
         if (sfxOn) tone(660, 0.08, 'sine', 0, 0.05);
       });
 
-      /* ============ LIVE STATUS (demo toggle) ============ */
-      const liveDot = document.getElementById('liveDot');
-      const liveText = document.getElementById('liveText');
-      function setLive(isLive) {
-        liveDot.classList.toggle('on', isLive);
-        liveText.textContent = isLive ? 'LIVE ON KICK' : 'OFFLINE';
-      }
-      setLive(false);
-      // Lightweight demo flicker so the badge feels alive; replace with real API polling if desired.
-      setTimeout(() => setLive(Math.random() < 0.35), 2600);
 
       /* ============ MATCHMAKER LOGIC ============ */
       const name1El = document.getElementById('name1');
@@ -3228,6 +3629,489 @@
         ensureAudio(); sfxClick();
         caseResult.classList.remove('show');
       });
+
+      /* ============ BIG BRAIN BATTLE (trivia race: batcy vs chat) ============ */
+      // first answer in each list is the correct one — options get shuffled when shown
+      const QUIZ_QUESTIONS = {
+        gaming: [
+          { q: "Which company created Super Mario?", a: ["Nintendo", "Sega", "Sony", "Atari"] },
+          { q: "In Minecraft, which block do you need to build a Nether portal?", a: ["Obsidian", "Bedrock", "Netherrack", "Cobblestone"] },
+          { q: "In Minecraft, which mob sneaks up and explodes?", a: ["Creeper", "Enderman", "Zombie", "Skeleton"] },
+          { q: "What colour is Pac-Man?", a: ["Yellow", "Red", "Blue", "Green"] },
+          { q: "In Among Us, what are the bad guys called?", a: ["Impostors", "Traitors", "Spies", "Killers"] },
+          { q: "Which Pokémon is #001 in the Pokédex?", a: ["Bulbasaur", "Pikachu", "Charmander", "Mew"] },
+          { q: "Which studio makes the GTA series?", a: ["Rockstar Games", "Ubisoft", "EA", "Bethesda"] },
+          { q: "Which Counter-Strike map is the most iconic of all time?", a: ["Dust II", "Ascent", "Rust", "Nuketown"] },
+          { q: "In League of Legends, what do you destroy to win the game?", a: ["The Nexus", "The Ancient", "The Throne", "The Core"] },
+          { q: "What does 'GG' stand for?", a: ["Good Game", "Get Good", "Great Gaming", "Go Go"] },
+          { q: "What's the name of the main character in Halo?", a: ["Master Chief", "Commander Shepard", "Marcus Fenix", "Doomguy"] },
+          { q: "What is the name of Sonic's two-tailed fox buddy?", a: ["Tails", "Knuckles", "Shadow", "Amy"] },
+          { q: "Which company makes the PlayStation?", a: ["Sony", "Microsoft", "Nintendo", "Sega"] },
+          { q: "'The cake is a lie' comes from which game?", a: ["Portal", "Half-Life", "BioShock", "Borderlands"] },
+          { q: "Which battle royale drops you from a Battle Bus?", a: ["Fortnite", "PUBG", "Apex Legends", "Warzone"] },
+          { q: "What is the name of Mario's brother?", a: ["Luigi", "Wario", "Toad", "Yoshi"] },
+          { q: "Summoner's Rift is the main map of which game?", a: ["League of Legends", "Dota 2", "Smite", "World of Warcraft"] },
+          { q: "Which Valorant agent uses Nanoswarm grenades?", a: ["Killjoy", "Cypher", "Sage", "Chamber"] },
+          { q: "In what year did Fortnite Battle Royale come out?", a: ["2017", "2015", "2018", "2019"] },
+          { q: "What is the best-selling video game of all time?", a: ["Minecraft", "GTA V", "Wii Sports", "Tetris (Game Boy)"] },
+        ],
+        general: [
+          { q: "What is the capital of Tunisia?", a: ["Tunis", "Sfax", "Sousse", "Bizerte"] },
+          { q: "Which ancient city's ruins are right next to Tunis?", a: ["Carthage", "Troy", "Pompeii", "Babylon"] },
+          { q: "What currency is used in Tunisia?", a: ["Dinar", "Dirham", "Euro", "Pound"] },
+          { q: "What is the capital of Japan?", a: ["Tokyo", "Osaka", "Kyoto", "Seoul"] },
+          { q: "How many continents are there?", a: ["7", "5", "6", "8"] },
+          { q: "What is the largest ocean on Earth?", a: ["Pacific", "Atlantic", "Indian", "Arctic"] },
+          { q: "What is the longest river in Africa?", a: ["Nile", "Congo", "Niger", "Zambezi"] },
+          { q: "What is the largest hot desert in the world?", a: ["Sahara", "Gobi", "Kalahari", "Arabian"] },
+          { q: "How many players does a football team have on the pitch?", a: ["11", "10", "12", "9"] },
+          { q: "Which country won the 2022 FIFA World Cup?", a: ["Argentina", "France", "Brazil", "Croatia"] },
+          { q: "How many days are in a leap year?", a: ["366", "365", "364", "367"] },
+          { q: "Who painted the Mona Lisa?", a: ["Leonardo da Vinci", "Michelangelo", "Picasso", "Van Gogh"] },
+          { q: "What is the tallest mountain on Earth?", a: ["Mount Everest", "K2", "Kilimanjaro", "Mont Blanc"] },
+          { q: "Which country has the biggest population?", a: ["India", "China", "USA", "Indonesia"] },
+          { q: "What is the smallest country in the world?", a: ["Vatican City", "Monaco", "Malta", "San Marino"] },
+          { q: "What is the largest country by area?", a: ["Russia", "Canada", "China", "USA"] },
+          { q: "How many hours are in a week?", a: ["168", "144", "172", "160"] },
+          { q: "In which city is the Eiffel Tower?", a: ["Paris", "London", "Rome", "Madrid"] },
+          { q: "How many sides does a hexagon have?", a: ["6", "5", "7", "8"] },
+          { q: "Which language has the most native speakers?", a: ["Mandarin Chinese", "English", "Spanish", "Hindi"] },
+        ],
+        tech: [
+          { q: "What does CPU stand for?", a: ["Central Processing Unit", "Computer Personal Unit", "Core Processing Utility", "Central Program Unit"] },
+          { q: "What does GPU stand for?", a: ["Graphics Processing Unit", "General Power Unit", "Gaming Performance Unit", "Graphic Program Utility"] },
+          { q: "What does RAM stand for?", a: ["Random Access Memory", "Read Access Memory", "Rapid Action Memory", "Run All Memory"] },
+          { q: "What does SSD stand for?", a: ["Solid State Drive", "Super Speed Disk", "System Storage Device", "Serial Storage Drive"] },
+          { q: "What does USB stand for?", a: ["Universal Serial Bus", "United System Bus", "Universal Signal Board", "Ultra Speed Bus"] },
+          { q: "What does HTTP stand for?", a: ["HyperText Transfer Protocol", "High Tech Transfer Program", "HyperText Transmission Process", "Home Tool Transfer Protocol"] },
+          { q: "What does 'www' stand for?", a: ["World Wide Web", "World Web Window", "Wide World Web", "Web World Wide"] },
+          { q: "How many bits are in a byte?", a: ["8", "4", "16", "10"] },
+          { q: "Which digits does binary use?", a: ["0 and 1", "1 and 2", "0 to 9", "A to F"] },
+          { q: "Who co-founded Microsoft with Paul Allen?", a: ["Bill Gates", "Steve Jobs", "Mark Zuckerberg", "Elon Musk"] },
+          { q: "Who created Linux?", a: ["Linus Torvalds", "Richard Stallman", "Dennis Ritchie", "Steve Wozniak"] },
+          { q: "In what year was YouTube founded?", a: ["2005", "2003", "2007", "2009"] },
+          { q: "Which company develops Android?", a: ["Google", "Apple", "Samsung", "Microsoft"] },
+          { q: "What is the Windows shortcut to copy?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"] },
+          { q: "Which key refreshes a page in most browsers?", a: ["F5", "F1", "F12", "F2"] },
+          { q: "Which programming language is named after Monty Python?", a: ["Python", "Java", "Ruby", "Rust"] },
+          { q: "The first real computer 'bug' found in 1947 was a…", a: ["Moth", "Spider", "Cockroach", "Fly"] },
+          { q: "What does AI stand for?", a: ["Artificial Intelligence", "Automatic Internet", "Advanced Interface", "Auto Input"] },
+          { q: "Which company makes the iPhone?", a: ["Apple", "Samsung", "Google", "Huawei"] },
+          { q: "What does Ctrl + Z do in most programs?", a: ["Undo", "Redo", "Save", "Zoom"] },
+        ],
+        science: [
+          { q: "What is the chemical symbol for gold?", a: ["Au", "Ag", "Gd", "Go"] },
+          { q: "What is the chemical symbol for sodium?", a: ["Na", "So", "Sd", "S"] },
+          { q: "Which planet is called the Red Planet?", a: ["Mars", "Jupiter", "Venus", "Mercury"] },
+          { q: "What is the largest planet in our solar system?", a: ["Jupiter", "Saturn", "Neptune", "Earth"] },
+          { q: "Which planet is closest to the Sun?", a: ["Mercury", "Venus", "Mars", "Earth"] },
+          { q: "How many planets are in our solar system?", a: ["8", "9", "7", "10"] },
+          { q: "Which gas do plants absorb from the air?", a: ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"] },
+          { q: "What gas makes up most of Earth's atmosphere?", a: ["Nitrogen", "Oxygen", "Carbon dioxide", "Argon"] },
+          { q: "How many bones are in an adult human body?", a: ["206", "201", "212", "186"] },
+          { q: "What is the largest organ of the human body?", a: ["Skin", "Liver", "Brain", "Lungs"] },
+          { q: "Which part of the cell is called the powerhouse?", a: ["Mitochondria", "Nucleus", "Ribosome", "Membrane"] },
+          { q: "At sea level, water boils at…", a: ["100 °C", "90 °C", "110 °C", "212 °C"] },
+          { q: "What is the hardest natural material?", a: ["Diamond", "Iron", "Quartz", "Granite"] },
+          { q: "Roughly how fast does light travel?", a: ["300,000 km/s", "30,000 km/s", "3,000 km/s", "3,000,000 km/s"] },
+          { q: "Who came up with the theory of relativity?", a: ["Albert Einstein", "Isaac Newton", "Nikola Tesla", "Galileo"] },
+          { q: "What force keeps us stuck to the ground?", a: ["Gravity", "Magnetism", "Friction", "Inertia"] },
+          { q: "What is the centre of an atom called?", a: ["Nucleus", "Electron", "Core", "Proton"] },
+          { q: "Which blood type is the universal donor?", a: ["O negative", "AB positive", "A negative", "B positive"] },
+          { q: "What is H₂O?", a: ["Water", "Hydrogen peroxide", "Salt", "Oxygen"] },
+          { q: "Which planet has the most famous rings?", a: ["Saturn", "Uranus", "Mars", "Mercury"] },
+        ],
+        fun: [
+          { q: "What is the only mammal that can truly fly? 🦇", a: ["Bat", "Flying squirrel", "Sugar glider", "Flying lemur"] },
+          { q: "What is a group of bats called?", a: ["A colony", "A pack", "A herd", "A pod"] },
+          { q: "How many hearts does an octopus have?", a: ["3", "1", "2", "5"] },
+          { q: "What colour is octopus blood?", a: ["Blue", "Red", "Green", "Purple"] },
+          { q: "Which of these is technically a berry?", a: ["Banana", "Strawberry", "Raspberry", "Cherry"] },
+          { q: "Which food basically never goes bad?", a: ["Honey", "Rice", "Bread", "Cheese"] },
+          { q: "On Venus, a day is ___ than a year.", a: ["Longer", "Shorter", "Exactly the same", "Venus has no days"] },
+          { q: "What colour is a polar bear's skin?", a: ["Black", "White", "Pink", "Grey"] },
+          { q: "Which animal has fingerprints almost identical to humans?", a: ["Koala", "Chimpanzee", "Panda", "Gorilla"] },
+          { q: "What is Scotland's national animal?", a: ["Unicorn", "Lion", "Stag", "Eagle"] },
+          { q: "Bananas are slightly…", a: ["Radioactive", "Magnetic", "Poisonous", "Electric"] },
+          { q: "Which of these existed before trees?", a: ["Sharks", "Dinosaurs", "Birds", "Flowers"] },
+          { q: "What is a group of flamingos called?", a: ["A flamboyance", "A parade", "A party", "A blush"] },
+          { q: "When is the Eiffel Tower slightly taller?", a: ["Summer", "Winter", "At night", "It never changes"] },
+          { q: "Which animal can't jump?", a: ["Elephant", "Kangaroo", "Cat", "Frog"] },
+          { q: "What's the most common letter in English?", a: ["E", "A", "T", "S"] },
+          { q: "How many legs does a spider have?", a: ["8", "6", "10", "12"] },
+          { q: "Which planet spins on its side?", a: ["Uranus", "Neptune", "Saturn", "Mars"] },
+          { q: "Which is the fastest land animal?", a: ["Cheetah", "Lion", "Horse", "Greyhound"] },
+          { q: "What do you call a baby kangaroo?", a: ["A joey", "A kit", "A cub", "A pup"] },
+        ],
+      };
+      const QUIZ_CAT_LABELS = { gaming: '🎮 GAMING', general: '🌍 GENERAL', tech: '💻 TECH', science: '🔬 SCIENCE', fun: '🤯 FUN FACTS' };
+      const QUIZ_LETTERS = ['A', 'B', 'C', 'D'];
+      const QUIZ_DURATION = 20000;
+      const QUIZ_MAX_PTS = 100;
+      const QUIZ_MIN_PTS = 10;
+      const QUIZ_SCORES_KEY = 'batcyQuizScores';
+
+      const QUIZ_LINES = {
+        batcyRight: [
+          "Big brain bat. Chat, take notes. 🧠",
+          "Batcy said 'easy' and meant it.",
+          "Built different. The bat simply knows things.",
+          "Chat is shaking right now. As they should.",
+          "Another one for the bat. Chat is in shambles.",
+        ],
+        batcyWrong: [
+          "Batcy fumbled it. Chat steals the points. 💀",
+          "Confidently wrong. The worst kind of wrong.",
+          "The bat got cooked by a trivia question. Clip it.",
+          "Chat is never letting Batcy live this one down.",
+          "That was a free question and the bat said no.",
+        ],
+        chatRight: [
+          "{n} is cooking. Somebody check their search history.",
+          "{n} just carried the whole chat on their back.",
+          "{n} answered faster than the bat could think.",
+          "Chat 1, Batcy 0. {n} is built different.",
+          "Respect to {n}. Actual brain cells spotted in chat.",
+        ],
+        chatWrong: [
+          "{n} said that with full confidence and zero knowledge. Batcy steals!",
+          "Chat embarrassed itself. Batcy takes the points. 💸",
+          "{n} typed that answer in 0.2 seconds and it shows.",
+          "Thanks for the free points, {n}. — the bat",
+          "Chat really said that out loud. Batcy steals.",
+        ],
+        timeout: [
+          "Nobody answered. Everybody's brain buffered.",
+          "Silence. Pure silence. Both teams got cooked.",
+          "Time's up. That question won and nobody else did.",
+        ],
+      };
+      const QUIZ_STICKERS = {
+        batcyRight: ['rich-removebg-preview.png', 'cool-removebg-preview.png', 'hype-removebg-preview.png', 'nice-removebg-preview.png'],
+        batcyWrong: ['cry-removebg-preview.png', 'salty-removebg-preview.png', 'image_2026-07-30_192243961-removebg-preview.png'],
+        chatRight: ['mindblow-removebg-preview.png', 'gg-removebg-preview.png', 'thanks-removebg-preview.png', 'cheers-removebg-preview.png'],
+        chatWrong: ['diss-removebg-preview.png', 'sip-removebg-preview.png', 'rich-removebg-preview.png'],
+        timeout: ['zzz-removebg-preview.png'],
+        skip: ['zzz-removebg-preview.png'],
+      };
+
+      const quizBox = document.getElementById('quizBox');
+      const quizCatEl = document.getElementById('quizCat');
+      const quizNumEl = document.getElementById('quizNum');
+      const quizQEl = document.getElementById('quizQ');
+      const quizOptionsEl = document.getElementById('quizOptions');
+      const quizWorthEl = document.getElementById('quizWorth');
+      const quizTimerEl = document.getElementById('quizTimer');
+      const quizIdle = document.getElementById('quizIdle');
+      const quizLive = document.getElementById('quizLive');
+      const quizAnswering = document.getElementById('quizAnswering');
+      const quizHint = document.getElementById('quizHint');
+      const quizNameSlot = document.getElementById('quizNameSlot');
+      const quizNameEl = document.getElementById('quizName');
+      const avaQuiz = document.getElementById('avaQuiz');
+      const quizStartBtn = document.getElementById('quizStartBtn');
+      const quizBatcyBtn = document.getElementById('quizBatcyBtn');
+      const quizChatBtn = document.getElementById('quizChatBtn');
+      const quizSkipBtn = document.getElementById('quizSkipBtn');
+      const quizCancelBtn = document.getElementById('quizCancelBtn');
+      const quizResult = document.getElementById('quizResult');
+      const quizSticker = document.getElementById('quizSticker');
+      const quizTag = document.getElementById('quizTag');
+      const quizAnswerEl = document.getElementById('quizAnswer');
+      const quizLineEl = document.getElementById('quizLine');
+      const quizNextBtn = document.getElementById('quizNextBtn');
+      const quizLb = document.getElementById('quizLb');
+      const quizReset = document.getElementById('quizReset');
+      const quizSubtabs = document.querySelectorAll('#quizSubtabs .case-subtab');
+
+      let quizCategory = 'gaming';
+      let quizState = 'idle'; // idle | running | answering | done
+      let quizCurrent = null;
+      let quizAnswerer = 'batcy';
+      let quizStart = 0;
+      let quizPausedAt = 0;
+      let quizProgress = 0;
+      let quizLockedPts = 0;
+      let quizLastSec = -1;
+      let quizCount = 0;
+      const quizBags = {};
+
+      function loadQuizScores() {
+        try {
+          const s = JSON.parse(localStorage.getItem(QUIZ_SCORES_KEY));
+          if (s && typeof s === 'object') return { batcy: s.batcy || 0, chat: s.chat || 0, players: s.players || {} };
+        } catch (e) { }
+        return { batcy: 0, chat: 0, players: {} };
+      }
+      let quizScores = loadQuizScores();
+      function saveQuizScores() {
+        try { localStorage.setItem(QUIZ_SCORES_KEY, JSON.stringify(quizScores)); } catch (e) { }
+      }
+
+      function renderQuizScores() {
+        document.getElementById('qsBatcy').textContent = quizScores.batcy;
+        document.getElementById('qsChat').textContent = quizScores.chat;
+        const ranked = Object.entries(quizScores.players).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        if (!ranked.length) {
+          quizLb.innerHTML = '<li class="quiz-lb-empty">No big brains in chat yet. Prove us wrong.</li>';
+          return;
+        }
+        const medals = ['👑', '🥈', '🥉'];
+        quizLb.innerHTML = ranked.map(([name, pts], i) =>
+          '<li><span class="lb-rank">' + (medals[i] || '#' + (i + 1)) + '</span><span class="lb-name">' + escapeHtml(name) +
+          '</span><span class="lb-pts">' + pts + '</span></li>').join('');
+      }
+
+      function bumpQuizSide(id) {
+        const el = document.getElementById(id);
+        el.classList.remove('bump');
+        void el.offsetWidth;
+        el.classList.add('bump');
+      }
+
+      function nextQuizQuestion() {
+        // shuffle-bag per category so questions don't repeat until the pool runs dry
+        if (!quizBags[quizCategory] || !quizBags[quizCategory].length) {
+          const cats = quizCategory === 'mix' ? Object.keys(QUIZ_QUESTIONS) : [quizCategory];
+          quizBags[quizCategory] = cats
+            .flatMap(cat => QUIZ_QUESTIONS[cat].map(item => ({ cat, item })))
+            .sort(() => Math.random() - 0.5);
+        }
+        const { cat, item } = quizBags[quizCategory].pop();
+        const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+        return { cat, q: item.q, options: order.map(i => item.a[i]), correct: order.indexOf(0) };
+      }
+
+      function renderQuizOptions() {
+        quizOptionsEl.classList.remove('pickable');
+        quizOptionsEl.innerHTML = '';
+        if (!quizCurrent) return;
+        quizCurrent.options.forEach((text, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-opt';
+          btn.disabled = true;
+          btn.innerHTML = '<span class="qo-letter">' + QUIZ_LETTERS[i] + '</span><span>' + escapeHtml(text) + '</span>';
+          btn.addEventListener('click', () => pickQuizAnswer(i));
+          quizOptionsEl.appendChild(btn);
+        });
+      }
+
+      function setQuizPanels(state) {
+        quizIdle.hidden = state !== 'idle';
+        quizLive.hidden = state !== 'running';
+        quizAnswering.hidden = state !== 'answering';
+      }
+
+      function quizPointsAt(t) {
+        const raw = QUIZ_MAX_PTS - (QUIZ_MAX_PTS - QUIZ_MIN_PTS) * t;
+        return Math.max(QUIZ_MIN_PTS, Math.round(raw / 5) * 5);
+      }
+
+      function quizTick(now) {
+        if (quizState !== 'running') return;
+        const elapsed = now - quizStart;
+        const t = Math.min(1, elapsed / QUIZ_DURATION);
+        quizProgress = t;
+        quizWorthEl.textContent = quizPointsAt(t);
+        quizTimerEl.style.width = ((1 - t) * 100) + '%';
+        quizTimerEl.classList.toggle('hurry', t > 0.75);
+
+        const sec = Math.floor(elapsed / 1000);
+        if (sec !== quizLastSec) {
+          quizLastSec = sec;
+          if (t > 0.75) tone(720, 0.06, 'square', 0, 0.05);
+          else tone(260, 0.03, 'square', 0, 0.025);
+        }
+        if (t >= 1) { finishQuizRound('timeout'); return; }
+        requestAnimationFrame(quizTick);
+      }
+
+      function startQuizRound() {
+        ensureAudio();
+        if (quizState === 'running' || quizState === 'answering') return;
+        sfxClick(); sfxWhoosh();
+        quizCurrent = nextQuizQuestion();
+        quizCount++;
+
+        quizCatEl.textContent = QUIZ_CAT_LABELS[quizCurrent.cat];
+        quizNumEl.textContent = 'Q' + quizCount;
+        quizQEl.textContent = quizCurrent.q;
+        quizBox.classList.remove('pop');
+        void quizBox.offsetWidth;
+        quizBox.classList.add('pop');
+        renderQuizOptions();
+
+        quizResult.classList.remove('show');
+        quizWorthEl.textContent = QUIZ_MAX_PTS;
+        quizTimerEl.style.width = '100%';
+        quizTimerEl.classList.remove('hurry');
+        quizNameEl.value = '';
+        avaQuiz.textContent = '?';
+        quizState = 'running';
+        setQuizPanels('running');
+        quizStart = performance.now();
+        quizLastSec = -1;
+        requestAnimationFrame(quizTick);
+        quizBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      function beginQuizAnswer(who) {
+        ensureAudio();
+        if (quizState !== 'running') return;
+        quizState = 'answering';
+        quizPausedAt = performance.now();
+        quizLockedPts = quizPointsAt(quizProgress);
+        quizAnswerer = who;
+        tone(880, 0.1, 'square', 0, 0.06);
+        tone(1320, 0.14, 'square', 0.06, 0.05);
+        quizHint.textContent = who === 'batcy'
+          ? '👆 Click the answer Batcy gave (' + quizLockedPts + ' pts on the line)'
+          : '👆 Type who answered, then click the answer chat gave (' + quizLockedPts + ' pts on the line)';
+        quizNameSlot.hidden = who !== 'chat';
+        quizOptionsEl.classList.add('pickable');
+        quizOptionsEl.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = false; });
+        setQuizPanels('answering');
+        if (who === 'chat') quizNameEl.focus();
+      }
+
+      function pickQuizAnswer(idx) {
+        if (quizState !== 'answering') return;
+        sfxClick();
+        finishQuizRound(idx === quizCurrent.correct ? 'right' : 'wrong', idx);
+      }
+
+      function finishQuizRound(outcome, pickedIdx) {
+        quizState = 'done';
+        setQuizPanels('done');
+        quizTimerEl.classList.remove('hurry');
+        quizOptionsEl.classList.remove('pickable');
+        quizOptionsEl.querySelectorAll('.quiz-opt').forEach((b, i) => {
+          b.disabled = true;
+          if (i === quizCurrent.correct) b.classList.add('correct');
+          else if (i === pickedIdx) b.classList.add('wrong');
+          else b.classList.add('dim');
+        });
+        const correctText = QUIZ_LETTERS[quizCurrent.correct] + ') ' + quizCurrent.options[quizCurrent.correct];
+        quizAnswerEl.textContent = correctText;
+
+        const pts = quizLockedPts;
+        const chatName = quizNameEl.value.trim().replace(/^@/, '');
+        const shownName = chatName || 'Chat';
+        let key, tag, tagCls, logText;
+
+        if (outcome === 'timeout' || outcome === 'skip') {
+          key = outcome;
+          tag = outcome === 'timeout' ? "TIME'S UP" : 'SKIPPED';
+          tagCls = 'common';
+          logText = (outcome === 'timeout' ? 'Nobody answered' : 'Skipped') + ' &mdash; ' + escapeHtml(correctText);
+        } else if (quizAnswerer === 'batcy') {
+          if (outcome === 'right') {
+            key = 'batcyRight'; quizScores.batcy += pts;
+            tag = 'BATCY +' + pts; tagCls = 'legendary';
+            bumpQuizSide('qsBatcySide');
+            logText = 'Batcy got it right (+' + pts + ') &mdash; ' + escapeHtml(correctText);
+          } else {
+            key = 'batcyWrong'; quizScores.chat += pts;
+            tag = 'CHAT STEALS +' + pts; tagCls = 'epic';
+            bumpQuizSide('qsChatSide');
+            logText = 'Batcy fumbled, chat steals +' + pts + ' &mdash; ' + escapeHtml(correctText);
+          }
+        } else {
+          if (outcome === 'right') {
+            key = 'chatRight'; quizScores.chat += pts;
+            if (chatName) quizScores.players[chatName] = (quizScores.players[chatName] || 0) + pts;
+            tag = 'CHAT +' + pts; tagCls = 'epic';
+            bumpQuizSide('qsChatSide');
+            logText = '<b>' + escapeHtml(shownName) + '</b> got it right (+' + pts + ') &mdash; ' + escapeHtml(correctText);
+          } else {
+            key = 'chatWrong'; quizScores.batcy += pts;
+            tag = 'BATCY STEALS +' + pts; tagCls = 'legendary';
+            bumpQuizSide('qsBatcySide');
+            logText = '<b>' + escapeHtml(shownName) + '</b> got it wrong, Batcy steals +' + pts + ' &mdash; ' + escapeHtml(correctText);
+          }
+        }
+
+        quizTag.textContent = tag;
+        quizTag.className = 'case-rarity-tag ' + tagCls;
+        const lines = QUIZ_LINES[key] || ["Batcy vetoed this one. No points for anybody."];
+        quizLineEl.textContent = pick(lines).replace(/\{n\}/g, shownName);
+        quizSticker.src = 'stickers/' + pick(QUIZ_STICKERS[key]);
+        quizSticker.style.animation = 'none';
+        void quizSticker.offsetWidth;
+        quizSticker.style.animation = '';
+
+        const rect = quizBox.getBoundingClientRect();
+        if (key === 'batcyRight' || key === 'chatRight') {
+          sfxFanfare();
+          burst(window.innerWidth / 2, rect.top + rect.height / 2, 50, 'bat');
+        } else if (key === 'batcyWrong' || key === 'chatWrong') {
+          sfxBuzzer();
+          burst(window.innerWidth / 2, rect.top + rect.height / 2, 26, 'square');
+        } else if (key === 'timeout') {
+          sfxSad();
+        } else {
+          tone(400, 0.12, 'sine', 0, 0.05);
+        }
+
+        saveQuizScores();
+        renderQuizScores();
+        logHistory('🧠', logText);
+        quizResult.classList.add('show');
+        setTimeout(() => quizResult.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+      }
+
+      quizStartBtn.addEventListener('click', (evt) => { rippleAt(quizStartBtn, evt); startQuizRound(); });
+      quizNextBtn.addEventListener('click', startQuizRound);
+      quizBatcyBtn.addEventListener('click', () => beginQuizAnswer('batcy'));
+      quizChatBtn.addEventListener('click', () => beginQuizAnswer('chat'));
+
+      quizCancelBtn.addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        if (quizState !== 'answering') return;
+        // resume the clock exactly where it stopped
+        quizStart += performance.now() - quizPausedAt;
+        quizOptionsEl.classList.remove('pickable');
+        quizOptionsEl.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = true; });
+        quizState = 'running';
+        setQuizPanels('running');
+        requestAnimationFrame(quizTick);
+      });
+
+      quizSkipBtn.addEventListener('click', () => {
+        ensureAudio();
+        if (quizState !== 'running') return;
+        finishQuizRound('skip');
+      });
+
+      quizNameEl.addEventListener('input', () => {
+        const v = quizNameEl.value.trim().replace(/^@/, '');
+        avaQuiz.textContent = v ? v[0].toUpperCase() : '?';
+      });
+      quizNameEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') quizCancelBtn.click();
+      });
+
+      quizSubtabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          ensureAudio(); sfxClick();
+          if (quizState === 'running' || quizState === 'answering') return;
+          quizCategory = tab.dataset.quiz;
+          quizSubtabs.forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+          if (quizState === 'idle') quizCatEl.textContent = quizCategory === 'mix' ? '🦇 MIX' : QUIZ_CAT_LABELS[quizCategory];
+        });
+      });
+
+      quizReset.addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        if (quizState === 'running' || quizState === 'answering') return;
+        if (!confirm('Reset Batcy vs Chat scores and the leaderboard?')) return;
+        quizScores = { batcy: 0, chat: 0, players: {} };
+        saveQuizScores();
+        renderQuizScores();
+      });
+
+      renderQuizScores();
+
 
       /* hook history logging into the existing matchmaker result */
       matchBtn.addEventListener('click', () => {
