@@ -2710,7 +2710,6 @@
 
       <div class="quiz-controls" id="royaleLobby">
         <button class="ghost-btn" id="royaleAddChat">💬 Add chatters</button>
-        <button class="ghost-btn" id="royaleAddBots">🤖 Add test bots</button>
         <button class="ghost-btn" id="royaleClear">Clear</button>
       </div>
       <div class="quiz-controls" id="royaleStartRow">
@@ -4631,7 +4630,7 @@
         const arg = (parts[1] || '').replace(/^@/, '');
 
         if (cmd === '!join' && panelActive('royale')) {
-          if (addRoyalePlayer(name, false)) tone(660, 0.05, 'sine', 0, 0.03);
+          if (addRoyalePlayer(name)) tone(660, 0.05, 'sine', 0, 0.03);
         } else if (cmd === '!join' && panelActive('wheel')) {
           const inst = document.querySelector('.wheel-instance.active');
           if (inst && !inst.querySelector('.spinBtn').disabled && addWheelNames(inst, [name])) tone(660, 0.05, 'sine', 0, 0.03);
@@ -4718,8 +4717,6 @@
       /* ============ BAT ROYALE (chat battle royale: !join, survive rounds, last bat wins) ============ */
       const ROYALE_WORDS = ['BAT', 'CAVE', 'FANGS', 'CHAOS', 'GARLIC', 'NIGHT', 'ECHO', 'VAMPIRE', 'BATCY', 'WINGS', 'MOON',
         'SHADOW', 'HARISSA', 'COUSCOUS', 'KICK', 'GOBLIN', 'SQUEAK', 'LABLEBI', 'BRIK', 'GREMLIN'];
-      const ROYALE_BOT_NAMES = ['bot_luna', 'bot_gremlin', 'bot_vlad', 'bot_echo', 'bot_nyx', 'bot_squeaky', 'bot_count',
-        'bot_moth', 'bot_drac', 'bot_shade', 'bot_fang', 'bot_pip'];
       const ROYALE_MAX_PLAYERS = 200;
       const ROYALE_WINS_KEY = 'batcyRoyaleWins';
       const ROYALE_ROUNDS = {
@@ -4759,7 +4756,7 @@
       const royaleLb = document.getElementById('royaleLb');
 
       let royaleState = 'lobby'; // lobby | round | between | over
-      const royalePlayers = new Map(); // lowercase name -> { name, alive, bot, el, badge }
+      const royalePlayers = new Map(); // lowercase name -> { name, alive, el, badge }
       let royaleRoundNum = 0;
       let royaleRound = null;
       let royaleLastType = null;
@@ -4786,19 +4783,19 @@
         royaleNextRow.hidden = royaleState !== 'between';
       }
 
-      function addRoyalePlayer(name, bot) {
+      function addRoyalePlayer(name) {
         const key = name.toLowerCase();
         if (royaleState !== 'lobby' || royalePlayers.has(key) || royalePlayers.size >= ROYALE_MAX_PLAYERS) return false;
         if (!royalePlayers.size) royaleGrid.innerHTML = '';
         const el = document.createElement('div');
         el.className = 'rp';
         const label = document.createElement('span');
-        label.textContent = (bot ? '🤖 ' : '🦇 ') + name;
+        label.textContent = '🦇 ' + name;
         const badge = document.createElement('span');
         badge.className = 'rp-badge';
         el.append(label, badge);
         royaleGrid.appendChild(el);
-        royalePlayers.set(key, { name, alive: true, bot, el, badge });
+        royalePlayers.set(key, { name, alive: true, el, badge });
         renderRoyaleStats();
         return true;
       }
@@ -4915,27 +4912,10 @@
         setRoyaleControls();
         renderRoyaleStats();
         sfxWhoosh();
-        scheduleRoyaleBots(r);
         r.start = performance.now();
         r.lastSec = -1;
         requestAnimationFrame(now => royaleTick(now, r.id));
         royaleEvent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-
-      // test bots play through the same input path as real chatters
-      function scheduleRoyaleBots(r) {
-        const at = (ms, fn) => royaleTimers.push(setTimeout(fn, ms));
-        royaleAlive().filter(p => p.bot).forEach(p => {
-          const say = text => () => { if (royaleRound && royaleRound.id === r.id) royaleInput(p.name, text); };
-          if (r.type === 'duel' && Math.random() < 0.8) at(1500 + Math.random() * r.dur * 0.6, say(r.answer));
-          else if (r.type === 'type' && Math.random() < 0.75) at(1500 + Math.random() * r.dur * 0.75, say(r.answer));
-          else if (r.type === 'doors' && Math.random() < 0.9) at(1000 + Math.random() * r.dur * 0.7, say(String(1 + Math.floor(Math.random() * 3))));
-          else if (r.type === 'sleep' && Math.random() < 0.2) at(Math.random() * r.dur * 0.9, say('lol'));
-          else if (r.type === 'frenzy') {
-            const n = Math.floor(Math.random() * 7);
-            for (let i = 0; i < n; i++) at(Math.random() * r.dur * 0.95, say('BAT 🦇'));
-          }
-        });
       }
 
       function royaleTick(now, id) {
@@ -5100,18 +5080,16 @@
         if (!winner) { setRoyaleEvent({ emoji: '💀', title: 'NO SURVIVORS', text: 'The cave claimed everyone.' }); return; }
         setRoyaleEvent({ emoji: '👑', title: 'WE HAVE A WINNER', text: winner.name + ' is the last bat flying.' });
         winner.el.classList.add('safe');
-        document.getElementById('royaleWinner').textContent = (winner.bot ? '🤖 ' : '🦇 ') + winner.name.toUpperCase();
+        document.getElementById('royaleWinner').textContent = '🦇 ' + winner.name.toUpperCase();
         document.getElementById('royaleWinLine').textContent = pick(ROYALE_WIN_LINES).replace('{r}', royaleRoundNum);
         const sticker = document.getElementById('royaleSticker');
         sticker.src = 'stickers/' + pick(ROYALE_WIN_STICKERS);
         sticker.style.animation = 'none';
         void sticker.offsetWidth;
         sticker.style.animation = '';
-        if (!winner.bot) {
-          royaleWins[winner.name] = (royaleWins[winner.name] || 0) + 1;
-          try { localStorage.setItem(ROYALE_WINS_KEY, JSON.stringify(royaleWins)); } catch (e) { }
-          renderRoyaleWins();
-        }
+        royaleWins[winner.name] = (royaleWins[winner.name] || 0) + 1;
+        try { localStorage.setItem(ROYALE_WINS_KEY, JSON.stringify(royaleWins)); } catch (e) { }
+        renderRoyaleWins();
         royaleFeedAdd('👑 <b>' + escapeHtml(winner.name) + '</b> wins Bat Royale after ' + royaleRoundNum + ' rounds!');
         logHistory('👑', '<b>' + escapeHtml(winner.name) + '</b> won Bat Royale (' + royalePlayers.size + ' players, ' + royaleRoundNum + ' rounds)');
         royaleResult.classList.add('show');
@@ -5156,13 +5134,8 @@
         ensureAudio(); sfxClick();
         const names = activeChatters();
         if (!names.length) { flashBtnText(evt.currentTarget, chatConnected ? 'nobody yet 😴' : 'chat offline'); return; }
-        const added = names.filter(n => addRoyalePlayer(n, false)).length;
+        const added = names.filter(n => addRoyalePlayer(n)).length;
         flashBtnText(evt.currentTarget, added ? '+' + added + ' added' : 'all in already');
-      });
-      document.getElementById('royaleAddBots').addEventListener('click', (evt) => {
-        ensureAudio(); sfxClick();
-        const added = ROYALE_BOT_NAMES.filter(n => addRoyalePlayer(n, true)).length;
-        flashBtnText(evt.currentTarget, added ? '+' + added + ' bots' : 'bots already in');
       });
       document.getElementById('royaleReset').addEventListener('click', () => {
         ensureAudio(); sfxClick();
