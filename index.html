@@ -1850,6 +1850,236 @@
     }
 
 
+    /* ---------- bat royale (chat battle royale) ---------- */
+    .royale-stats {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .royale-stat {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 16px;
+      text-align: center;
+      min-width: 96px;
+    }
+
+    .royale-stat .rs-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      color: var(--ink-dim);
+      margin-bottom: 7px;
+    }
+
+    .royale-stat .rs-val {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(233, 213, 255, 0.45);
+    }
+
+    .royale-event {
+      max-width: 620px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+      transition: border-color .3s ease, box-shadow .3s ease;
+    }
+
+    .royale-event.pop {
+      animation: stickerPop .45s cubic-bezier(.2, 1.4, .4, 1);
+    }
+
+    .royale-event.danger {
+      border-color: var(--danger);
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 26px rgba(255, 77, 77, 0.35);
+    }
+
+    .re-emoji {
+      font-size: 40px;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .re-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--pink-soft);
+      margin-bottom: 10px;
+    }
+
+    .re-text {
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .re-word {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(20px, 6vw, 34px);
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-shadow: 0 0 18px rgba(233, 213, 255, 0.6);
+      margin: 16px 0 4px;
+      word-break: break-all;
+    }
+
+    .royale-doors {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .rd {
+      width: 92px;
+      padding: 14px 6px 10px;
+      border-radius: 12px;
+      border: 2px solid rgba(168, 85, 247, 0.45);
+      background: linear-gradient(180deg, #1c1030, #0e081b);
+      transition: .25s ease;
+    }
+
+    .rd .rd-ico {
+      font-size: 30px;
+    }
+
+    .rd .rd-num {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .rd .rd-count {
+      font-size: 11px;
+      color: var(--ink-dim);
+      margin-top: 5px;
+    }
+
+    .rd.trap {
+      border-color: var(--danger);
+      background: rgba(255, 77, 77, 0.16);
+      animation: caseItemPop .55s cubic-bezier(.2, 1.6, .3, 1);
+    }
+
+    .rd.clear {
+      border-color: #3ddc84;
+      opacity: .7;
+    }
+
+    .royale-event .meter {
+      width: 100%;
+      margin: 18px 0 0;
+    }
+
+    .royale-event .meter-fill {
+      transition: none;
+      width: 100%;
+    }
+
+    .royale-event .meter-fill.hurry {
+      background: linear-gradient(90deg, var(--danger), #ff9f4d);
+      box-shadow: 0 0 12px rgba(255, 77, 77, 0.7);
+    }
+
+    .royale-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      max-width: 760px;
+      max-height: 260px;
+      overflow-y: auto;
+      margin: 20px auto 0;
+    }
+
+    .royale-empty {
+      color: var(--ink-dim);
+      font-size: 12.5px;
+      padding: 10px;
+    }
+
+    .rp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--ink);
+      transition: .25s ease;
+      animation: histIn .3s ease;
+    }
+
+    .rp .rp-badge {
+      font-size: 10.5px;
+      color: var(--pink-soft);
+    }
+
+    .rp.safe {
+      border-color: #3ddc84;
+      background: rgba(61, 220, 132, 0.12);
+    }
+
+    .rp.target {
+      border-color: var(--danger);
+      box-shadow: 0 0 14px rgba(255, 77, 77, 0.6);
+    }
+
+    .rp.out {
+      opacity: .32;
+      text-decoration: line-through;
+      filter: grayscale(1);
+    }
+
+    .rp.dying {
+      animation: rpDie .5s ease;
+    }
+
+    @keyframes rpDie {
+      30% {
+        transform: scale(1.2);
+        background: rgba(255, 77, 77, 0.5);
+        border-color: var(--danger);
+      }
+    }
+
+    .royale-feed {
+      list-style: none;
+      max-width: 620px;
+      margin: 18px auto 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .royale-feed li {
+      font-size: 12.5px;
+      color: var(--ink-dim);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 7px 12px;
+      animation: histIn .3s ease;
+    }
+
+    .royale-feed li b {
+      color: var(--ink);
+    }
+
     /* ---------- history log ---------- */
     .history-section {
       margin-top: 40px;
@@ -2046,7 +2276,7 @@
           d="M12 2c.6 1.1 1 2.1 1.1 3.1 2.6-1.7 5.4-2.4 8.4-2.1-1.4 1.3-2.2 2.6-2.6 4.1 1.9.9 3 2.3 3.1 4.4-1.6-.7-3-.9-4.4-.6.6 1.7-.1 3.2-1.4 4.5-.4-1.3-1-2.2-1.9-2.8.2 1.7-.3 3.1-1.5 4.3l-.7-2-.7 2c-1.2-1.2-1.7-2.6-1.5-4.3-.9.6-1.5 1.5-1.9 2.8-1.3-1.3-2-2.8-1.4-4.5-1.4-.3-2.8-.1-4.4.6.1-2.1 1.2-3.5 3.1-4.4-.4-1.5-1.2-2.8-2.6-4.1 3-.3 5.8.4 8.4 2.1C11 4.1 11.4 3.1 12 2Z" />
       </svg>
       <h1>THE BAT CAVE<br>OF CHAOS</h1>
-      <p>Six ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
+      <p>Seven ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
       <img class="hero-sticker" src="stickers/hi-removebg-preview.png" alt="Batcy waving hi" loading="lazy">
     </section>
 
@@ -2068,6 +2298,9 @@
       </button>
       <button class="mode-tab" data-mode="quiz" role="tab" aria-selected="false">
         <span class="mode-tab-ico">🧠</span><span>Brain Battle</span>
+      </button>
+      <button class="mode-tab" data-mode="royale" role="tab" aria-selected="false">
+        <span class="mode-tab-ico">⚔️</span><span>Bat Royale</span>
       </button>
     </div>
 
@@ -2435,6 +2668,78 @@
           <button class="ghost-btn" id="quizReset">Reset scores</button>
         </div>
         <ol class="quiz-lb" id="quizLb"></ol>
+      </div>
+    </div>
+
+    <div class="card mode-panel" id="panel-royale">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">BAT <span>ROYALE</span></h2>
+      <p class="card-sub">Chat types <b>!join</b> to enter the cave. Survive Batcy's challenges round after round &mdash; last bat
+        flying wins.</p>
+
+      <div class="royale-stats">
+        <div class="royale-stat">
+          <div class="rs-label">ALIVE</div>
+          <div class="rs-val" id="royaleAlive">0</div>
+        </div>
+        <div class="royale-stat">
+          <div class="rs-label">ROUND</div>
+          <div class="rs-val" id="royaleRound">&ndash;</div>
+        </div>
+        <div class="royale-stat">
+          <div class="rs-label">OUT</div>
+          <div class="rs-val" id="royaleOut">0</div>
+        </div>
+      </div>
+
+      <div class="royale-event" id="royaleEvent">
+        <div class="re-emoji" id="reEmoji">🦇</div>
+        <div class="re-title" id="reTitle">LOBBY OPEN</div>
+        <div class="re-text" id="reText">Chat: type !join to enter the cave. You need at least 2 bats to start.</div>
+        <div class="re-word" id="reWord" hidden></div>
+        <div class="royale-doors" id="reDoors" hidden></div>
+        <div class="meter" id="reMeter" hidden>
+          <div class="meter-fill" id="reTimer"></div>
+        </div>
+      </div>
+
+      <div class="royale-grid" id="royaleGrid"></div>
+
+      <div class="quiz-controls" id="royaleLobby">
+        <button class="ghost-btn" id="royaleAddChat">💬 Add chatters</button>
+        <button class="ghost-btn" id="royaleAddBots">🤖 Add test bots</button>
+        <button class="ghost-btn" id="royaleClear">Clear</button>
+      </div>
+      <div class="quiz-controls" id="royaleStartRow">
+        <button class="match-btn" id="royaleStartBtn">START ROYALE ⚔️</button>
+      </div>
+      <div class="quiz-controls" id="royaleNextRow" hidden>
+        <button class="match-btn" id="royaleNextBtn">NEXT ROUND ▶</button>
+        <button class="ghost-btn" id="royaleEndBtn">✖ End game</button>
+      </div>
+
+      <ul class="royale-feed" id="royaleFeed"></ul>
+
+      <div class="result" id="royaleResult">
+        <div class="result-inner">
+          <img class="result-sticker" id="royaleSticker" src="stickers/gg-removebg-preview.png" alt="" loading="lazy">
+          <div class="case-rarity-tag legendary">LAST BAT FLYING</div>
+          <div class="ship-name" id="royaleWinner"
+            style="font-size:clamp(20px,4.6vw,30px); color:var(--gold); text-shadow:0 0 20px rgba(233,213,255,.6);">???</div>
+          <div class="status-desc" id="royaleWinLine">&nbsp;</div>
+          <button class="again-btn" id="royaleAgainBtn">🔁 New Lobby</button>
+        </div>
+      </div>
+
+      <div class="quiz-board">
+        <div class="history-head">
+          <h3 class="pixel history-title">ROYALE CHAMPIONS</h3>
+          <button class="ghost-btn" id="royaleReset">Reset wins</button>
+        </div>
+        <ol class="quiz-lb" id="royaleLb"></ol>
       </div>
     </div>
 
@@ -4276,6 +4581,7 @@
         renderChatLink();
         const content = text.trim();
         if (quizState === 'running') handleQuizVote(name, content);
+        if (royaleState === 'round') royaleInput(name, content);
         if (content[0] === '!') handleChatCommand(name, content);
       }
 
@@ -4324,7 +4630,9 @@
         const cmd = parts[0].toLowerCase();
         const arg = (parts[1] || '').replace(/^@/, '');
 
-        if (cmd === '!join' && panelActive('wheel')) {
+        if (cmd === '!join' && panelActive('royale')) {
+          if (addRoyalePlayer(name, false)) tone(660, 0.05, 'sine', 0, 0.03);
+        } else if (cmd === '!join' && panelActive('wheel')) {
           const inst = document.querySelector('.wheel-instance.active');
           if (inst && !inst.querySelector('.spinBtn').disabled && addWheelNames(inst, [name])) tone(660, 0.05, 'sine', 0, 0.03);
         } else if (cmd === '!ship' && panelActive('match') && !matchBtn.disabled) {
@@ -4406,6 +4714,468 @@
       });
 
       connectKickChat();
+
+      /* ============ BAT ROYALE (chat battle royale: !join, survive rounds, last bat wins) ============ */
+      const ROYALE_WORDS = ['BAT', 'CAVE', 'FANGS', 'CHAOS', 'GARLIC', 'NIGHT', 'ECHO', 'VAMPIRE', 'BATCY', 'WINGS', 'MOON',
+        'SHADOW', 'HARISSA', 'COUSCOUS', 'KICK', 'GOBLIN', 'SQUEAK', 'LABLEBI', 'BRIK', 'GREMLIN'];
+      const ROYALE_BOT_NAMES = ['bot_luna', 'bot_gremlin', 'bot_vlad', 'bot_echo', 'bot_nyx', 'bot_squeaky', 'bot_count',
+        'bot_moth', 'bot_drac', 'bot_shade', 'bot_fang', 'bot_pip'];
+      const ROYALE_MAX_PLAYERS = 200;
+      const ROYALE_WINS_KEY = 'batcyRoyaleWins';
+      const ROYALE_ROUNDS = {
+        type: { weight: 3, dur: 10000 },
+        doors: { weight: 2, dur: 12000 },
+        sleep: { weight: 2, dur: 10000 },
+        frenzy: { weight: 1.5, dur: 10000 },
+        wrath: { weight: 1, dur: 4000 },
+        duel: { weight: 0, dur: 15000 }, // forced when exactly two bats remain
+      };
+      const ROYALE_DEATH_LINES = {
+        type: ["{n} got bitten. Should've typed faster. 🦇", "{n} fumbled the keyboard and paid for it.", "{n} was too slow. The bats don't wait."],
+        doors: ["{n} walked straight into the garlic trap. 🧄", "{n} picked the cursed tunnel. RIP.", "{n} chose... poorly. 🚪💀"],
+        idle: ["{n} was AFK and got left in the cave.", "{n} didn't even pick a tunnel. Lurking is fatal."],
+        sleep: ["{n} typed during nap time. Batcy woke up. 💀", "{n} couldn't stay quiet for 10 seconds. Tragic.", "{n} made a noise. The bat heard it."],
+        frenzy: ["{n} wasn't hype enough. Kicked from the cave.", "{n} brought library energy to a frenzy. Gone."],
+        wrath: ["Batcy's wrath struck {n}. No reason. Just vibes. ⚡", "{n} was chosen. The bat has spoken.", "{n} got yeeted out of the cave by Batcy personally."],
+        duel: ["{n} lost the final duel by a millisecond. ⚔️", "{n} typed second. Second place is first loser.", "{n} blinked during the final duel. Fatal."],
+      };
+      const ROYALE_WIN_LINES = ["Survived {r} rounds of pure chaos. Absolute menace.", "Last bat flying after {r} rounds. Chat, bow down.", "{r} rounds, zero fear. Certified cave legend."];
+      const ROYALE_WIN_STICKERS = ['gg-removebg-preview.png', 'hype-removebg-preview.png', 'rich-removebg-preview.png', 'cheers-removebg-preview.png'];
+
+      const royaleEvent = document.getElementById('royaleEvent');
+      const reEmoji = document.getElementById('reEmoji');
+      const reTitle = document.getElementById('reTitle');
+      const reText = document.getElementById('reText');
+      const reWord = document.getElementById('reWord');
+      const reDoors = document.getElementById('reDoors');
+      const reMeter = document.getElementById('reMeter');
+      const reTimer = document.getElementById('reTimer');
+      const royaleGrid = document.getElementById('royaleGrid');
+      const royaleFeed = document.getElementById('royaleFeed');
+      const royaleLobby = document.getElementById('royaleLobby');
+      const royaleStartRow = document.getElementById('royaleStartRow');
+      const royaleNextRow = document.getElementById('royaleNextRow');
+      const royaleResult = document.getElementById('royaleResult');
+      const royaleLb = document.getElementById('royaleLb');
+
+      let royaleState = 'lobby'; // lobby | round | between | over
+      const royalePlayers = new Map(); // lowercase name -> { name, alive, bot, el, badge }
+      let royaleRoundNum = 0;
+      let royaleRound = null;
+      let royaleLastType = null;
+      let royaleRoundId = 0;
+      let royaleTimers = [];
+      let royaleWrathFlicker = null;
+
+      function royaleAlive() { return [...royalePlayers.values()].filter(p => p.alive); }
+
+      function renderRoyaleStats() {
+        const alive = royaleAlive().length;
+        document.getElementById('royaleAlive').textContent = alive;
+        document.getElementById('royaleOut').textContent = royalePlayers.size - alive;
+        document.getElementById('royaleRound').textContent = royaleRoundNum || '–';
+      }
+
+      function renderRoyaleEmpty() {
+        if (!royalePlayers.size) royaleGrid.innerHTML = '<div class="royale-empty">Nobody in the cave yet. Chat, type !join</div>';
+      }
+
+      function setRoyaleControls() {
+        royaleLobby.hidden = royaleState !== 'lobby';
+        royaleStartRow.hidden = royaleState !== 'lobby';
+        royaleNextRow.hidden = royaleState !== 'between';
+      }
+
+      function addRoyalePlayer(name, bot) {
+        const key = name.toLowerCase();
+        if (royaleState !== 'lobby' || royalePlayers.has(key) || royalePlayers.size >= ROYALE_MAX_PLAYERS) return false;
+        if (!royalePlayers.size) royaleGrid.innerHTML = '';
+        const el = document.createElement('div');
+        el.className = 'rp';
+        const label = document.createElement('span');
+        label.textContent = (bot ? '🤖 ' : '🦇 ') + name;
+        const badge = document.createElement('span');
+        badge.className = 'rp-badge';
+        el.append(label, badge);
+        royaleGrid.appendChild(el);
+        royalePlayers.set(key, { name, alive: true, bot, el, badge });
+        renderRoyaleStats();
+        return true;
+      }
+
+      function royaleFeedAdd(html) {
+        const li = document.createElement('li');
+        li.innerHTML = html;
+        royaleFeed.prepend(li);
+        while (royaleFeed.children.length > 8) royaleFeed.lastChild.remove();
+      }
+
+      function setRoyaleEvent(o) {
+        reEmoji.textContent = o.emoji;
+        reTitle.textContent = o.title;
+        reText.textContent = o.text;
+        reWord.hidden = !o.word;
+        reWord.textContent = o.word || '';
+        reDoors.hidden = !o.doors;
+        reMeter.hidden = !o.timer;
+        royaleEvent.classList.toggle('danger', !!o.danger);
+        royaleEvent.classList.remove('pop');
+        void royaleEvent.offsetWidth;
+        royaleEvent.classList.add('pop');
+      }
+
+      function renderDoors() {
+        const counts = [0, 0, 0];
+        royaleRound.choices.forEach(d => { counts[d - 1]++; });
+        reDoors.innerHTML = [1, 2, 3].map(d => {
+          const cls = royaleRound.trap === d ? ' trap' : (royaleRound.trap ? ' clear' : '');
+          const ico = royaleRound.trap === d ? '🧄' : '🚪';
+          return '<div class="rd' + cls + '"><div class="rd-ico">' + ico + '</div><div class="rd-num">' + d +
+            '</div><div class="rd-count">' + counts[d - 1] + ' bat' + (counts[d - 1] === 1 ? '' : 's') + '</div></div>';
+        }).join('');
+      }
+
+      function pickRoyaleRoundType() {
+        const aliveCount = royaleAlive().length;
+        const options = Object.entries(ROYALE_ROUNDS).filter(([type]) =>
+          type !== 'duel' && type !== royaleLastType && (type !== 'wrath' || aliveCount >= 3));
+        const total = options.reduce((s, [, r]) => s + r.weight, 0);
+        let roll = Math.random() * total;
+        for (const [type, r] of options) {
+          roll -= r.weight;
+          if (roll <= 0) return type;
+        }
+        return options[0][0];
+      }
+
+      function clearRoyaleTimers() {
+        royaleTimers.forEach(clearTimeout);
+        royaleTimers = [];
+        clearInterval(royaleWrathFlicker);
+        royaleWrathFlicker = null;
+        royalePlayers.forEach(p => p.el.classList.remove('target'));
+      }
+
+      function startRoyale() {
+        ensureAudio();
+        if (royaleState !== 'lobby') return;
+        if (royaleAlive().length < 2) { sfxSad(); reText.textContent = 'Need at least 2 bats to start. Chat, type !join'; return; }
+        sfxClick(); sfxFanfare();
+        royaleRoundNum = 0;
+        royaleLastType = null;
+        royaleFeed.innerHTML = '';
+        royaleResult.classList.remove('show');
+        royaleFeedAdd('⚔️ <b>' + royaleAlive().length + ' bats</b> entered the cave. Let the chaos begin.');
+        logHistory('⚔️', 'Bat Royale started with <b>' + royaleAlive().length + '</b> players');
+        nextRoyaleRound();
+      }
+
+      function nextRoyaleRound() {
+        ensureAudio();
+        if (royaleState !== 'lobby' && royaleState !== 'between') return;
+        if (royaleAlive().length <= 1) { endRoyale(); return; }
+        clearRoyaleTimers();
+        royaleRoundNum++;
+        const type = royaleAlive().length === 2 ? 'duel' : pickRoyaleRoundType();
+        royaleLastType = type;
+        const r = { type, id: ++royaleRoundId, dur: ROYALE_ROUNDS[type].dur, responded: new Set(), choices: new Map(), counts: new Map(), trap: 0, answer: '' };
+        royaleRound = r;
+        royalePlayers.forEach(p => { p.el.classList.remove('safe', 'dying'); p.badge.textContent = ''; });
+
+        if (type === 'type') {
+          const word = pick(ROYALE_WORDS);
+          const backwards = Math.random() < 0.35;
+          r.answer = backwards ? word.split('').reverse().join('') : word;
+          setRoyaleEvent({
+            emoji: backwards ? '🔄' : '⌨️', title: backwards ? 'TYPE IT BACKWARDS' : 'TYPE TO SURVIVE',
+            text: backwards ? 'Type this word BACKWARDS in chat before time runs out:' : 'Type this word in chat before time runs out or get bitten:',
+            word, timer: true,
+          });
+        } else if (type === 'doors') {
+          setRoyaleEvent({ emoji: '🕳️', title: 'PICK A TUNNEL', text: 'Type 1, 2 or 3. One tunnel hides a garlic trap. No pick = eliminated.', doors: true, timer: true });
+          renderDoors();
+        } else if (type === 'sleep') {
+          setRoyaleEvent({ emoji: '😴', title: 'NAP TIME', text: 'Batcy is sleeping. Anyone who types ANYTHING right now is OUT.', timer: true, danger: true });
+        } else if (type === 'duel') {
+          r.answer = pick(ROYALE_WORDS);
+          setRoyaleEvent({ emoji: '⚔️', title: 'FINAL DUEL', text: 'Two bats left. First to type this word in chat wins everything:', word: r.answer, timer: true, danger: true });
+        } else if (type === 'frenzy') {
+          setRoyaleEvent({ emoji: '🔥', title: 'HYPE FRENZY', text: 'Spam BAT or 🦇 in chat! The quietest bats get kicked out.', timer: true });
+        } else {
+          setRoyaleEvent({ emoji: '⚡', title: "BATCY'S WRATH", text: 'No challenge. No mercy. Batcy is choosing victims…', timer: true, danger: true });
+          royaleWrathFlicker = setInterval(() => {
+            const alive = royaleAlive();
+            alive.forEach(p => p.el.classList.remove('target'));
+            if (alive.length) pick(alive).el.classList.add('target');
+            tone(300 + Math.random() * 300, 0.04, 'square', 0, 0.03);
+          }, 140);
+        }
+
+        royaleState = 'round';
+        setRoyaleControls();
+        renderRoyaleStats();
+        sfxWhoosh();
+        scheduleRoyaleBots(r);
+        r.start = performance.now();
+        r.lastSec = -1;
+        requestAnimationFrame(now => royaleTick(now, r.id));
+        royaleEvent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // test bots play through the same input path as real chatters
+      function scheduleRoyaleBots(r) {
+        const at = (ms, fn) => royaleTimers.push(setTimeout(fn, ms));
+        royaleAlive().filter(p => p.bot).forEach(p => {
+          const say = text => () => { if (royaleRound && royaleRound.id === r.id) royaleInput(p.name, text); };
+          if (r.type === 'duel' && Math.random() < 0.8) at(1500 + Math.random() * r.dur * 0.6, say(r.answer));
+          else if (r.type === 'type' && Math.random() < 0.75) at(1500 + Math.random() * r.dur * 0.75, say(r.answer));
+          else if (r.type === 'doors' && Math.random() < 0.9) at(1000 + Math.random() * r.dur * 0.7, say(String(1 + Math.floor(Math.random() * 3))));
+          else if (r.type === 'sleep' && Math.random() < 0.2) at(Math.random() * r.dur * 0.9, say('lol'));
+          else if (r.type === 'frenzy') {
+            const n = Math.floor(Math.random() * 7);
+            for (let i = 0; i < n; i++) at(Math.random() * r.dur * 0.95, say('BAT 🦇'));
+          }
+        });
+      }
+
+      function royaleTick(now, id) {
+        if (royaleState !== 'round' || !royaleRound || royaleRound.id !== id) return;
+        const r = royaleRound;
+        const elapsed = now - r.start;
+        const t = Math.min(1, elapsed / r.dur);
+        reTimer.style.width = ((1 - t) * 100) + '%';
+        reTimer.classList.toggle('hurry', t > 0.7);
+        const sec = Math.floor(elapsed / 1000);
+        if (sec !== r.lastSec && r.type !== 'wrath') {
+          r.lastSec = sec;
+          if (t > 0.7) tone(720, 0.06, 'square', 0, 0.05);
+          else tone(260, 0.03, 'square', 0, 0.025);
+        }
+        if (t >= 1) { resolveRoyaleRound(); return; }
+        requestAnimationFrame(n => royaleTick(n, id));
+      }
+
+      function royaleInput(name, content) {
+        const p = royalePlayers.get(name.toLowerCase());
+        if (!p || !p.alive || royaleState !== 'round') return;
+        const r = royaleRound;
+        const key = name.toLowerCase();
+        if (r.type === 'type') {
+          if (!r.responded.has(key) && content.toUpperCase().replace(/\s+/g, '') === r.answer) {
+            r.responded.add(key);
+            p.el.classList.add('safe');
+            p.badge.textContent = '✔';
+            tone(900, 0.04, 'sine', 0, 0.03);
+          }
+        } else if (r.type === 'duel') {
+          if (content.toUpperCase().replace(/\s+/g, '') === r.answer) {
+            clearRoyaleTimers();
+            royaleState = 'between';
+            royaleAlive().filter(o => o !== p).forEach(o => eliminateRoyale(o, 'duel'));
+            endRoyale();
+          }
+        } else if (r.type === 'doors') {
+          const m = content.match(/^([123])$/);
+          if (m && !r.choices.has(key)) {
+            r.choices.set(key, Number(m[1]));
+            p.badge.textContent = '🚪' + m[1];
+            renderDoors();
+          }
+        } else if (r.type === 'sleep') {
+          r.napped = (r.napped || 0) + 1;
+          eliminateRoyale(p, 'sleep');
+          if (royaleAlive().length <= 1) { clearRoyaleTimers(); royaleState = 'between'; endRoyale(); }
+        } else if (r.type === 'frenzy') {
+          if (/bat|🦇/i.test(content)) {
+            const c = (r.counts.get(key) || 0) + 1;
+            r.counts.set(key, c);
+            p.badge.textContent = '🔥' + c;
+          }
+        }
+      }
+
+      function eliminateRoyale(p, reason) {
+        if (!p.alive) return;
+        p.alive = false;
+        p.el.classList.remove('safe', 'target');
+        p.el.classList.add('out', 'dying');
+        royaleFeedAdd('💀 ' + pick(ROYALE_DEATH_LINES[reason]).replace('{n}', '<b>' + escapeHtml(p.name) + '</b>'));
+        tone(160, 0.12, 'sawtooth', 0, 0.05);
+        renderRoyaleStats();
+      }
+
+      function shuffled(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
+
+      function resolveRoyaleRound() {
+        if (royaleState !== 'round') return;
+        const r = royaleRound;
+        clearRoyaleTimers();
+        royaleState = 'between';
+        reTimer.classList.remove('hurry');
+        const alive = royaleAlive();
+        let victims = [];
+        let reasonFor = () => r.type;
+        let summary;
+
+        if (r.type === 'type') {
+          victims = alive.filter(p => !r.responded.has(p.name.toLowerCase()));
+        } else if (r.type === 'doors') {
+          if (r.choices.size) {
+            // trap a tunnel that leaves at least one survivor, preferring one that actually catches someone
+            const outcomes = [1, 2, 3].map(d => ({
+              d, hit: alive.filter(p => { const c = r.choices.get(p.name.toLowerCase()); return !c || c === d; }),
+            })).filter(o => o.hit.length < alive.length);
+            const catching = outcomes.filter(o => o.hit.length > 0);
+            const chosen = pick(catching.length ? catching : outcomes);
+            if (chosen) { r.trap = chosen.d; victims = chosen.hit; }
+            if (!victims.length) summary = 'The garlic was in an empty tunnel. Lucky bats. 🧄';
+            renderDoors();
+            reasonFor = p => (r.choices.has(p.name.toLowerCase()) ? 'doors' : 'idle');
+          } else {
+            victims = alive.slice(); // nobody picked → everyone fails → mercy below
+          }
+        } else if (r.type === 'frenzy') {
+          const k = Math.max(1, Math.floor(alive.length * 0.3));
+          victims = shuffled(alive)
+            .sort((a, b) => (r.counts.get(a.name.toLowerCase()) || 0) - (r.counts.get(b.name.toLowerCase()) || 0))
+            .slice(0, Math.min(k, alive.length - 1));
+        } else if (r.type === 'wrath') {
+          const k = Math.min(3, Math.max(1, Math.round(alive.length * 0.2)), alive.length - 1);
+          victims = shuffled(alive).slice(0, k);
+        } else if (r.type === 'duel') {
+          // nobody typed it in time — Batcy settles it
+          victims = shuffled(alive).slice(0, alive.length - 1);
+          reasonFor = () => 'wrath';
+          royaleFeedAdd('⏱️ Nobody finished the duel… Batcy decides.');
+        }
+
+        if (r.type !== 'sleep' && victims.length >= alive.length) {
+          victims = [];
+          summary = 'Everyone failed… so the bats showed mercy. Nobody is out this round. 🦇';
+          royaleFeedAdd('🕊️ Everyone failed, so the bats showed mercy.');
+        } else if (r.type === 'sleep') {
+          summary = r.napped
+            ? r.napped + ' bat' + (r.napped === 1 ? '' : 's') + ' couldn\'t stay quiet.'
+            : 'Nobody made a sound. Respect. 🤫';
+        }
+
+        const step = victims.length ? Math.min(160, 2400 / victims.length) : 0;
+        victims.forEach((p, i) => royaleTimers.push(setTimeout(() => eliminateRoyale(p, reasonFor(p)), i * step)));
+        royaleTimers.push(setTimeout(() => {
+          const left = royaleAlive().length;
+          if (left <= 1) { endRoyale(); return; }
+          if (!summary) summary = victims.length + ' bat' + (victims.length === 1 ? '' : 's') + ' eliminated. ' + left + ' still flying.';
+          else summary += ' ' + left + ' still flying.';
+          reText.textContent = summary;
+          reMeter.hidden = true;
+          royaleEvent.classList.remove('danger');
+          setRoyaleControls();
+          royaleNextRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, victims.length * step + 500));
+      }
+
+      function loadRoyaleWins() {
+        try { return JSON.parse(localStorage.getItem(ROYALE_WINS_KEY)) || {}; } catch (e) { return {}; }
+      }
+      let royaleWins = loadRoyaleWins();
+      function renderRoyaleWins() {
+        const ranked = Object.entries(royaleWins).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        if (!ranked.length) {
+          royaleLb.innerHTML = '<li class="quiz-lb-empty">No champions yet. The cave is waiting.</li>';
+          return;
+        }
+        const medals = ['👑', '🥈', '🥉'];
+        royaleLb.innerHTML = ranked.map(([name, wins], i) =>
+          '<li><span class="lb-rank">' + (medals[i] || '#' + (i + 1)) + '</span><span class="lb-name">' + escapeHtml(name) +
+          '</span><span class="lb-pts">' + wins + (wins === 1 ? ' WIN' : ' WINS') + '</span></li>').join('');
+      }
+
+      function endRoyale() {
+        clearRoyaleTimers();
+        royaleState = 'over';
+        setRoyaleControls();
+        const winner = royaleAlive()[0];
+        reMeter.hidden = true;
+        royaleEvent.classList.remove('danger');
+        if (!winner) { setRoyaleEvent({ emoji: '💀', title: 'NO SURVIVORS', text: 'The cave claimed everyone.' }); return; }
+        setRoyaleEvent({ emoji: '👑', title: 'WE HAVE A WINNER', text: winner.name + ' is the last bat flying.' });
+        winner.el.classList.add('safe');
+        document.getElementById('royaleWinner').textContent = (winner.bot ? '🤖 ' : '🦇 ') + winner.name.toUpperCase();
+        document.getElementById('royaleWinLine').textContent = pick(ROYALE_WIN_LINES).replace('{r}', royaleRoundNum);
+        const sticker = document.getElementById('royaleSticker');
+        sticker.src = 'stickers/' + pick(ROYALE_WIN_STICKERS);
+        sticker.style.animation = 'none';
+        void sticker.offsetWidth;
+        sticker.style.animation = '';
+        if (!winner.bot) {
+          royaleWins[winner.name] = (royaleWins[winner.name] || 0) + 1;
+          try { localStorage.setItem(ROYALE_WINS_KEY, JSON.stringify(royaleWins)); } catch (e) { }
+          renderRoyaleWins();
+        }
+        royaleFeedAdd('👑 <b>' + escapeHtml(winner.name) + '</b> wins Bat Royale after ' + royaleRoundNum + ' rounds!');
+        logHistory('👑', '<b>' + escapeHtml(winner.name) + '</b> won Bat Royale (' + royalePlayers.size + ' players, ' + royaleRoundNum + ' rounds)');
+        royaleResult.classList.add('show');
+        sfxFanfare();
+        const rect = royaleEvent.getBoundingClientRect();
+        burst(window.innerWidth / 2, rect.top + rect.height / 2, 70, 'bat');
+        setTimeout(() => royaleResult.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+      }
+
+      function resetRoyaleLobby(keepPlayers) {
+        clearRoyaleTimers();
+        royaleState = 'lobby';
+        royaleRound = null;
+        royaleRoundNum = 0;
+        royaleResult.classList.remove('show');
+        royaleFeed.innerHTML = '';
+        if (keepPlayers) {
+          royalePlayers.forEach(p => { p.alive = true; p.el.classList.remove('out', 'dying', 'safe', 'target'); p.badge.textContent = ''; });
+        } else {
+          royalePlayers.clear();
+          royaleGrid.innerHTML = '';
+        }
+        setRoyaleEvent({ emoji: '🦇', title: 'LOBBY OPEN', text: 'Chat: type !join to enter the cave. You need at least 2 bats to start.' });
+        renderRoyaleEmpty();
+        renderRoyaleStats();
+        setRoyaleControls();
+      }
+
+      document.getElementById('royaleStartBtn').addEventListener('click', (evt) => {
+        rippleAt(evt.currentTarget, evt);
+        startRoyale();
+      });
+      document.getElementById('royaleNextBtn').addEventListener('click', () => { sfxClick(); nextRoyaleRound(); });
+      document.getElementById('royaleEndBtn').addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        if (confirm('End this game and go back to the lobby? Everyone gets revived.')) resetRoyaleLobby(true);
+      });
+      document.getElementById('royaleAgainBtn').addEventListener('click', () => { ensureAudio(); sfxClick(); resetRoyaleLobby(false); });
+      document.getElementById('royaleClear').addEventListener('click', () => { ensureAudio(); sfxClick(); resetRoyaleLobby(false); });
+
+      document.getElementById('royaleAddChat').addEventListener('click', (evt) => {
+        ensureAudio(); sfxClick();
+        const names = activeChatters();
+        if (!names.length) { flashBtnText(evt.currentTarget, chatConnected ? 'nobody yet 😴' : 'chat offline'); return; }
+        const added = names.filter(n => addRoyalePlayer(n, false)).length;
+        flashBtnText(evt.currentTarget, added ? '+' + added + ' added' : 'all in already');
+      });
+      document.getElementById('royaleAddBots').addEventListener('click', (evt) => {
+        ensureAudio(); sfxClick();
+        const added = ROYALE_BOT_NAMES.filter(n => addRoyalePlayer(n, true)).length;
+        flashBtnText(evt.currentTarget, added ? '+' + added + ' bots' : 'bots already in');
+      });
+      document.getElementById('royaleReset').addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        if (!confirm('Reset all Bat Royale wins?')) return;
+        royaleWins = {};
+        try { localStorage.setItem(ROYALE_WINS_KEY, '{}'); } catch (e) { }
+        renderRoyaleWins();
+      });
+
+      renderRoyaleEmpty();
+      renderRoyaleStats();
+      renderRoyaleWins();
+      setRoyaleControls();
 
       /* hook history logging into the existing matchmaker result */
       matchBtn.addEventListener('click', () => {
