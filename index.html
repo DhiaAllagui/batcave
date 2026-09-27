@@ -445,6 +445,89 @@
       border: 2px solid var(--pink);
     }
 
+    button.patron-photo {
+      padding: 0;
+      background: none;
+      cursor: zoom-in;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    button.patron-photo:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
+    }
+
+    button.patron-photo:focus-visible {
+      outline: 2px solid var(--pink-soft);
+      outline-offset: 3px;
+    }
+
+    .patron-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(5, 3, 8, 0.85);
+      backdrop-filter: blur(6px);
+      cursor: zoom-out;
+      animation: lbFade .2s ease;
+    }
+
+    .patron-lightbox[hidden] {
+      display: none;
+    }
+
+    .patron-lightbox figure {
+      margin: 0;
+      text-align: center;
+      animation: stickerPop .35s cubic-bezier(.2, 1.3, .4, 1);
+    }
+
+    .patron-lightbox img {
+      display: block;
+      max-width: min(92vw, 720px);
+      max-height: calc(100vh - 110px);
+      border-radius: 18px;
+      border: 2px solid var(--pink);
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
+    }
+
+    .patron-lightbox figcaption {
+      margin-top: 14px;
+      color: var(--pink-soft);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .patron-lightbox figcaption .pixel {
+      color: var(--ink);
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+
+    .patron-lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(18, 10, 31, 0.8);
+      color: var(--ink);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    @keyframes lbFade {
+      from {
+        opacity: 0;
+      }
+    }
+
     .patron-photo img {
       width: 100%;
       height: 100%;
@@ -2834,6 +2917,14 @@
     </svg>
   </div>
 
+  <div class="patron-lightbox" id="patronLightbox" hidden role="dialog" aria-modal="true" aria-label="LPATRON photo">
+    <button class="patron-lightbox-close" id="patronLightboxClose" aria-label="Close">✕</button>
+    <figure>
+      <img src="lpatron.jpeg" alt="LPATRON">
+      <figcaption><span class="pixel">LPATRON</span> · @psychoo_0</figcaption>
+    </figure>
+  </div>
+
   <aside class="chat-panel" id="chatPanel" hidden aria-label="Live Kick chat">
     <div class="cp-head">
       <span class="dot warn" id="cpDot"></span>
@@ -2891,9 +2982,9 @@
     </header>
 
     <aside class="patron-card" aria-label="LPATRON">
-      <div class="patron-photo">
+      <button class="patron-photo" id="patronPhoto" title="Click to enlarge" aria-label="Enlarge LPATRON photo">
         <img src="lpatron.jpeg" alt="LPATRON" loading="lazy">
-      </div>
+      </button>
       <div class="patron-text">
         <div class="patron-tag pixel">👑 THE PATRON</div>
         <div class="patron-name pixel">LPATRON</div>
@@ -6286,6 +6377,20 @@
       renderWordleScores();
       setWordleControls();
       setWordleFeed('');
+
+      /* ============ LPATRON photo lightbox ============ */
+      const patronPhoto = document.getElementById('patronPhoto');
+      const patronLightbox = document.getElementById('patronLightbox');
+      function setPatronLightbox(open) {
+        patronLightbox.hidden = !open;
+        if (open) document.getElementById('patronLightboxClose').focus();
+        else patronPhoto.focus();
+      }
+      patronPhoto.addEventListener('click', () => setPatronLightbox(true));
+      patronLightbox.addEventListener('click', () => setPatronLightbox(false));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !patronLightbox.hidden) setPatronLightbox(false);
+      });
 
       /* hook history logging into the existing matchmaker result */
       matchBtn.addEventListener('click', () => {
