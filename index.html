@@ -421,6 +421,138 @@
       }
     }
 
+    /* ---------- LPATRON card: fixed on the left on wide screens, compact badge otherwise ---------- */
+    .patron-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      max-width: 100%;
+      margin: 4px auto 0;
+      padding: 8px 16px 8px 8px;
+      border-radius: 999px;
+      background: rgba(18, 10, 31, 0.8);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.3);
+    }
+
+    .patron-photo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid var(--pink);
+    }
+
+    .patron-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 32%;
+      display: block;
+    }
+
+    .patron-tag {
+      font-size: 7px;
+      letter-spacing: 1px;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+
+    .patron-name {
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      color: var(--ink);
+      text-shadow: 0 0 12px rgba(168, 85, 247, 0.9);
+    }
+
+    .patron-handle {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--pink-soft);
+      margin-top: 3px;
+    }
+
+    @media (min-width: 1200px) {
+      .patron-card {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+        width: 196px;
+        margin: 0;
+        padding: 10px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        border-radius: 20px;
+        border: 1px solid var(--pink);
+        box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.25), 0 0 30px rgba(168, 85, 247, 0.45), 0 24px 50px -20px rgba(124, 43, 245, 0.8);
+        animation: patronFloat 5s ease-in-out infinite;
+      }
+
+      .patron-photo {
+        width: 100%;
+        height: 250px;
+        border-radius: 14px;
+        border: none;
+        position: relative;
+      }
+
+      .patron-photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 55%, rgba(18, 10, 31, 0.85));
+      }
+
+      .patron-text {
+        text-align: center;
+        margin-top: -34px;
+        position: relative;
+        padding: 0 4px 6px;
+      }
+
+      .patron-tag {
+        font-size: 8px;
+        margin-bottom: 8px;
+      }
+
+      .patron-name {
+        font-size: 17px;
+        letter-spacing: 2px;
+      }
+
+      .patron-handle {
+        font-size: 14px;
+        margin-top: 8px;
+      }
+
+      /* keep the games clear of the card (and of the chat panel when it's open) */
+      .wrap {
+        margin-left: max(236px, calc((100vw - 980px) / 2));
+      }
+
+      body.chat-open .wrap {
+        margin-left: max(236px, calc((100vw - 980px - 352px) / 2));
+        margin-right: 352px;
+      }
+    }
+
+    @keyframes patronFloat {
+
+      0%,
+      100% {
+        transform: translateY(-50%);
+      }
+
+      50% {
+        transform: translateY(calc(-50% - 8px));
+      }
+    }
+
     @media (max-width: 700px) {
       .chat-panel {
         left: 16px;
@@ -2742,6 +2874,17 @@
         </div>
       </div>
     </header>
+
+    <aside class="patron-card" aria-label="LPATRON">
+      <div class="patron-photo">
+        <img src="lpatron.jpeg" alt="LPATRON" loading="lazy">
+      </div>
+      <div class="patron-text">
+        <div class="patron-tag pixel">👑 THE PATRON</div>
+        <div class="patron-name pixel">LPATRON</div>
+        <div class="patron-handle">@psychoo_0</div>
+      </div>
+    </aside>
 
     <section class="hero">
       <div class="hero-eyebrow pixel">PRESS START</div>
