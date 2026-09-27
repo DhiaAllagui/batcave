@@ -25,6 +25,9 @@
       --ink-dim: #9483b8;
       --line: rgba(180, 139, 255, 0.14);
       --danger: #ff4d4d;
+      --wordle-g: #22c55e;
+      --wordle-y: #eab308;
+      --wordle-x: #3b3450;
     }
 
     * {
@@ -120,6 +123,17 @@
       .follow-marquee .lane {
         animation: none !important;
       }
+    }
+
+    /* ---------- background photo (fixed layer, darkened so the games stay readable) ---------- */
+    .bg-photo {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 3, 8, 0.55) 0%, rgba(5, 3, 8, 0.72) 45%, rgba(5, 3, 8, 0.88) 100%),
+        url("bg.jpg") center / cover no-repeat;
     }
 
     /* ---------- background canvas + scanlines ---------- */
@@ -281,7 +295,139 @@
     }
 
     .chat-link {
-      cursor: default;
+      cursor: pointer;
+    }
+
+    /* ---------- live chat panel ---------- */
+    .chat-panel {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 20;
+      width: 320px;
+      height: min(480px, calc(100vh - 96px));
+      display: flex;
+      flex-direction: column;
+      background: rgba(12, 7, 20, 0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.12), 0 24px 50px -20px rgba(124, 43, 245, 0.6);
+      overflow: hidden;
+    }
+
+    .chat-panel[hidden] {
+      display: none;
+    }
+
+    .cp-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 10px 10px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cp-title {
+      flex: 1;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: var(--pink-soft);
+    }
+
+    .cp-close {
+      background: none;
+      border: none;
+      color: var(--ink-dim);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 7px;
+      border-radius: 6px;
+    }
+
+    .cp-close:hover {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .cp-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .cp-line {
+      animation: histIn .2s ease;
+    }
+
+    .cp-name {
+      font-weight: 700;
+      margin-right: 5px;
+    }
+
+    .cp-line.cmd .cp-text {
+      color: var(--pink-soft);
+      font-style: italic;
+    }
+
+    .cp-line.host {
+      background: rgba(168, 85, 247, 0.12);
+      border-radius: 8px;
+      padding: 3px 6px;
+      margin: 0 -6px;
+    }
+
+    .cp-emote {
+      height: 22px;
+      width: auto;
+      vertical-align: middle;
+    }
+
+    .cp-empty {
+      margin: auto;
+      color: var(--ink-dim);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .cp-more {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      color: #0a0512;
+      background: var(--pink-soft);
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(168, 85, 247, 0.5);
+    }
+
+    /* make room for the panel on wide screens instead of covering the games */
+    @media (min-width: 1100px) {
+      body.chat-open .wrap {
+        margin-right: 352px;
+        margin-left: max(16px, calc((100vw - 980px - 352px) / 2));
+      }
+    }
+
+    @media (max-width: 700px) {
+      .chat-panel {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        height: 45vh;
+      }
     }
 
     .dot.warn {
@@ -466,45 +612,151 @@
 
     /* ---------- mode tabs ---------- */
     .mode-tabs {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
       margin-top: 30px;
     }
 
+    @media (max-width: 720px) {
+      .mode-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+    }
+
     .mode-tab {
+      position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      text-align: center;
+      gap: 6px;
+      min-height: 138px;
+      padding: 20px 12px 16px;
       font-family: 'Space Grotesk', sans-serif;
-      font-weight: 600;
-      font-size: 12.5px;
       color: var(--ink-dim);
-      letter-spacing: .3px;
-      background: rgba(255, 255, 255, 0.03);
+      background: linear-gradient(180deg, rgba(28, 16, 48, 0.85), rgba(15, 9, 27, 0.85));
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 16px;
+      border-radius: 16px;
       cursor: pointer;
-      transition: .2s ease;
+      overflow: hidden;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
+    }
+
+    .mode-tab::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.28), transparent 65%);
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events: none;
     }
 
     .mode-tab-ico {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      line-height: 1;
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(180, 139, 255, 0.22);
+      margin-bottom: 4px;
+      transition: transform .25s cubic-bezier(.2, 1.4, .4, 1), background .2s ease, box-shadow .2s ease;
+    }
+
+    .mode-tab-name {
+      font-weight: 700;
       font-size: 15px;
+      color: var(--ink);
+      letter-spacing: .2px;
+    }
+
+    .mode-tab-desc {
+      font-size: 11.5px;
+      line-height: 1.35;
+      color: var(--ink-dim);
+    }
+
+    .mode-tab-live {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 6.5px;
+      letter-spacing: .5px;
+      padding: 4px 6px;
+      border-radius: 999px;
+      color: #0a0512;
+      background: var(--pink-soft);
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
     }
 
     .mode-tab:hover {
-      color: var(--ink);
-      border-color: rgba(180, 139, 255, 0.4);
-      transform: translateY(-1px);
+      transform: translateY(-3px);
+      border-color: rgba(180, 139, 255, 0.5);
+      box-shadow: 0 14px 28px -14px rgba(124, 43, 245, 0.8);
+    }
+
+    .mode-tab:hover::before {
+      opacity: .6;
+    }
+
+    .mode-tab:hover .mode-tab-ico {
+      transform: scale(1.1) rotate(-6deg);
+    }
+
+    .mode-tab:focus-visible {
+      outline: 2px solid var(--pink-soft);
+      outline-offset: 3px;
     }
 
     .mode-tab.active {
       color: var(--ink);
       border-color: var(--pink);
-      background: linear-gradient(145deg, rgba(168, 85, 247, 0.18), rgba(124, 43, 245, 0.1));
-      box-shadow: 0 0 18px rgba(168, 85, 247, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(60, 26, 104, 0.95), rgba(28, 12, 52, 0.95));
+      box-shadow: 0 0 0 1px var(--pink), 0 0 26px rgba(168, 85, 247, 0.45), 0 16px 32px -16px rgba(124, 43, 245, 0.9);
+    }
+
+    .mode-tab.active::before {
+      opacity: 1;
+    }
+
+    .mode-tab.active .mode-tab-ico {
+      background: linear-gradient(145deg, rgba(168, 85, 247, 0.55), rgba(124, 43, 245, 0.35));
+      border-color: var(--pink-soft);
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.7);
+    }
+
+    .mode-tab.active .mode-tab-desc {
+      color: var(--pink-soft);
+    }
+
+    @media (max-width: 720px) {
+      .mode-tab {
+        min-height: 124px;
+        padding: 18px 8px 12px;
+      }
+
+      .mode-tab-ico {
+        width: 48px;
+        height: 48px;
+        font-size: 26px;
+      }
+
+      .mode-tab-name {
+        font-size: 14px;
+      }
+
+      .mode-tab-live {
+        position: static;
+        order: 4;
+        margin-top: 2px;
+      }
     }
 
     /* ---------- game card ---------- */
@@ -2080,6 +2332,214 @@
       color: var(--ink);
     }
 
+    /* ---------- chat wordle ---------- */
+    .wordle-known-wrap {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .wordle-known-label {
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      color: var(--ink-dim);
+      margin-bottom: 8px;
+    }
+
+    .wordle-known {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .wk-tile {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: var(--ink-dim);
+      border: 2px dashed rgba(180, 139, 255, 0.3);
+    }
+
+    .wk-tile.g {
+      color: #0a0512;
+      background: var(--wordle-g);
+      border: 2px solid var(--wordle-g);
+      animation: stickerPop .4s cubic-bezier(.2, 1.4, .4, 1);
+    }
+
+    .wk-tile.hint {
+      background: var(--wordle-y);
+      border-color: var(--wordle-y);
+    }
+
+    .wordle-board {
+      max-width: 460px;
+      margin: 0 auto;
+      max-height: 348px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 4px;
+    }
+
+    .wr {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: histIn .25s ease;
+    }
+
+    .wr-tiles {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .wt {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 17px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+      border: 2px solid rgba(180, 139, 255, 0.28);
+    }
+
+    .wt.g,
+    .wt.y,
+    .wt.x {
+      animation: wtFlip .5s ease both;
+      animation-delay: calc(var(--i) * 110ms);
+    }
+
+    .wt.g {
+      --c: var(--wordle-g);
+    }
+
+    .wt.y {
+      --c: var(--wordle-y);
+    }
+
+    .wt.x {
+      --c: var(--wordle-x);
+    }
+
+    @keyframes wtFlip {
+      0% {
+        transform: rotateX(0);
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(180, 139, 255, 0.28);
+      }
+
+      49% {
+        transform: rotateX(90deg);
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(180, 139, 255, 0.28);
+      }
+
+      50% {
+        transform: rotateX(90deg);
+        background: var(--c);
+        border-color: var(--c);
+      }
+
+      100% {
+        transform: rotateX(0);
+        background: var(--c);
+        border-color: var(--c);
+      }
+    }
+
+    .wr-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-dim);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .wr.win .wr-name {
+      color: var(--wordle-g);
+    }
+
+    .wordle-empty {
+      color: var(--ink-dim);
+      font-size: 12.5px;
+      text-align: center;
+      padding: 18px 0;
+    }
+
+    .wordle-kb {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .wkb-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .wkb {
+      width: 32px;
+      height: 40px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.08);
+      transition: background .3s ease, color .3s ease;
+    }
+
+    .wkb.g {
+      background: var(--wordle-g);
+      color: #0a0512;
+    }
+
+    .wkb.y {
+      background: var(--wordle-y);
+      color: #0a0512;
+    }
+
+    .wkb.x {
+      background: var(--wordle-x);
+      color: rgba(242, 233, 255, 0.35);
+    }
+
+    @media (max-width:560px) {
+      .wt {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+      }
+
+      .wkb {
+        width: 26px;
+        height: 36px;
+        font-size: 12px;
+      }
+
+      .wr-name {
+        font-size: 11px;
+      }
+    }
+
     /* ---------- history log ---------- */
     .history-section {
       margin-top: 40px;
@@ -2207,6 +2667,7 @@
 
 <body>
 
+  <div class="bg-photo" aria-hidden="true"></div>
   <div class="follow-marquee" id="followMarquee" aria-hidden="true"></div>
 
   <canvas id="bgCanvas"></canvas>
@@ -2226,6 +2687,18 @@
     </svg>
   </div>
 
+  <aside class="chat-panel" id="chatPanel" hidden aria-label="Live Kick chat">
+    <div class="cp-head">
+      <span class="dot warn" id="cpDot"></span>
+      <span class="pixel cp-title">BATCY'S CHAT</span>
+      <button class="cp-close" id="cpClose" title="Hide chat" aria-label="Hide chat">✕</button>
+    </div>
+    <div class="cp-list" id="cpList" aria-live="polite">
+      <div class="cp-empty" id="cpEmpty">Connecting to chat…</div>
+    </div>
+    <button class="cp-more" id="cpMore" hidden>New messages ↓</button>
+  </aside>
+
   <div class="wrap">
     <header>
       <div class="brand">
@@ -2237,7 +2710,8 @@
           <span class="dot on"></span>
           <span>LIVE ON KICK</span>
         </a>
-        <div class="live-pill chat-link" id="chatLink" title="Reads Kick chat live so the games can use real chatter names">
+        <div class="live-pill chat-link" id="chatLink" role="button" tabindex="0" aria-controls="chatPanel"
+          title="Show / hide live chat">
           <span class="dot warn" id="chatLinkDot"></span>
           <span id="chatLinkText">CHAT CONNECTING…</span>
         </div>
@@ -2276,31 +2750,53 @@
           d="M12 2c.6 1.1 1 2.1 1.1 3.1 2.6-1.7 5.4-2.4 8.4-2.1-1.4 1.3-2.2 2.6-2.6 4.1 1.9.9 3 2.3 3.1 4.4-1.6-.7-3-.9-4.4-.6.6 1.7-.1 3.2-1.4 4.5-.4-1.3-1-2.2-1.9-2.8.2 1.7-.3 3.1-1.5 4.3l-.7-2-.7 2c-1.2-1.2-1.7-2.6-1.5-4.3-.9.6-1.5 1.5-1.9 2.8-1.3-1.3-2-2.8-1.4-4.5-1.4-.3-2.8-.1-4.4.6.1-2.1 1.2-3.5 3.1-4.4-.4-1.5-1.2-2.8-2.6-4.1 3-.3 5.8.4 8.4 2.1C11 4.1 11.4 3.1 12 2Z" />
       </svg>
       <h1>THE BAT CAVE<br>OF CHAOS</h1>
-      <p>Seven ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
+      <p>Eight ways to mess with chat. Pick a mode, feed it names, and let the algorithm do something unreasonable.</p>
       <img class="hero-sticker" src="stickers/hi-removebg-preview.png" alt="Batcy waving hi" loading="lazy">
     </section>
 
     <div class="mode-tabs" id="modeTabs" role="tablist">
       <button class="mode-tab active" data-mode="match" role="tab" aria-selected="true">
-        <span class="mode-tab-ico">🦇</span><span>Matchmaker</span>
+        <span class="mode-tab-ico">🦇</span>
+        <span class="mode-tab-name">Matchmaker</span>
+        <span class="mode-tab-desc">Ship two chatters</span>
       </button>
       <button class="mode-tab" data-mode="wheel" role="tab" aria-selected="false">
-        <span class="mode-tab-ico">🎡</span><span>Roulette</span>
+        <span class="mode-tab-ico">🎡</span>
+        <span class="mode-tab-name">Roulette</span>
+        <span class="mode-tab-desc">Spin for a random victim</span>
       </button>
       <button class="mode-tab" data-mode="rate" role="tab" aria-selected="false">
-        <span class="mode-tab-ico">🔥</span><span>Rate My Chat</span>
+        <span class="mode-tab-ico">🔥</span>
+        <span class="mode-tab-name">Rate My Chat</span>
+        <span class="mode-tab-desc">Roast or hype anyone</span>
       </button>
       <button class="mode-tab" data-mode="fortune" role="tab" aria-selected="false">
-        <span class="mode-tab-ico">🃏</span><span>Bat Fortune</span>
+        <span class="mode-tab-ico">🃏</span>
+        <span class="mode-tab-name">Bat Fortune</span>
+        <span class="mode-tab-desc">Draw a mystery card</span>
       </button>
       <button class="mode-tab" data-mode="hotseat" role="tab" aria-selected="false">
-        <span class="mode-tab-ico">🎰</span><span>Hot Seat</span>
+        <span class="mode-tab-ico">🎰</span>
+        <span class="mode-tab-name">Hot Seat</span>
+        <span class="mode-tab-desc">Open a truth or dare case</span>
       </button>
       <button class="mode-tab" data-mode="quiz" role="tab" aria-selected="false">
-        <span class="mode-tab-ico">🧠</span><span>Brain Battle</span>
+        <span class="mode-tab-live">💬 CHAT PLAYS</span>
+        <span class="mode-tab-ico">🧠</span>
+        <span class="mode-tab-name">Brain Battle</span>
+        <span class="mode-tab-desc">Trivia: Batcy vs chat</span>
       </button>
       <button class="mode-tab" data-mode="royale" role="tab" aria-selected="false">
-        <span class="mode-tab-ico">⚔️</span><span>Bat Royale</span>
+        <span class="mode-tab-live">💬 CHAT PLAYS</span>
+        <span class="mode-tab-ico">⚔️</span>
+        <span class="mode-tab-name">Bat Royale</span>
+        <span class="mode-tab-desc">Last bat flying wins</span>
+      </button>
+      <button class="mode-tab" data-mode="wordle" role="tab" aria-selected="false">
+        <span class="mode-tab-live">💬 CHAT PLAYS</span>
+        <span class="mode-tab-ico">🟩</span>
+        <span class="mode-tab-name">Chat Wordle</span>
+        <span class="mode-tab-desc">Guess the word together</span>
       </button>
     </div>
 
@@ -2742,6 +3238,67 @@
       </div>
     </div>
 
+    <div class="card mode-panel" id="panel-wordle">
+      <svg class="card-bat" viewBox="0 0 120 36">
+        <path
+          d="M60 4c3-4 9-4.4 13-1.6 1.6-2.6 5-4 8.6-2.9-1 2.4-.6 4.4 1 6-2.6.6-4.4 2.4-5 5 4-1 8.4-.4 13 2-4.4 1.6-7.4 4-9.6 7.6 3.6-.4 7 .6 10 3-6 2-11.4 1-16.6-2.4-1.6 3-4.6 4.6-8.4 5-1-2.4-1.4-4.8-1-7.2-2.6 1.4-4.6 3.4-6 6.2-1.4-2.8-3.4-4.8-6-6.2.4 2.4 0 4.8-1 7.2-3.8-.4-6.8-2-8.4-5-5.2 3.4-10.6 4.4-16.6 2.4 3-2.4 6.4-3.4 10-3-2.2-3.6-5.2-6-9.6-7.6 4.6-2.4 9-3 13-2-.6-2.6-2.4-4.4-5-5 1.6-1.6 2-3.6 1-6 3.6-1.1 7-.3 8.6 2.9C51-.4 57 0 60 4Z" />
+      </svg>
+      <h2 class="card-title">CHAT <span>WORDLE</span></h2>
+      <p class="card-sub">Type any 5-letter word in chat to guess the secret word. 🟩 right spot · 🟨 wrong spot · ⬛ not in
+        the word. Find new letters for bonus points &mdash; crack it first to win big.</p>
+
+      <div class="royale-stats">
+        <div class="royale-stat">
+          <div class="rs-label">WORD</div>
+          <div class="rs-val" id="wordleNum">&ndash;</div>
+        </div>
+        <div class="royale-stat">
+          <div class="rs-label">GUESSES</div>
+          <div class="rs-val" id="wordleCount">0</div>
+        </div>
+        <div class="royale-stat">
+          <div class="rs-label">PLAYERS</div>
+          <div class="rs-val" id="wordlePlayers">0</div>
+        </div>
+      </div>
+
+      <div class="wordle-known-wrap">
+        <div class="wordle-known-label pixel">WHAT CHAT KNOWS</div>
+        <div class="wordle-known" id="wordleKnown"></div>
+      </div>
+
+      <div class="wordle-board" id="wordleBoard"></div>
+      <div class="wordle-kb" id="wordleKb"></div>
+      <div class="quiz-feed" id="wordleFeed"></div>
+
+      <div class="quiz-controls" id="wordleIdle">
+        <button class="match-btn" id="wordleStartBtn">NEW WORD 🟩</button>
+      </div>
+      <div class="quiz-controls" id="wordleLive" hidden>
+        <button class="ghost-btn" id="wordleHintBtn">💡 Hint</button>
+        <button class="ghost-btn" id="wordleGiveUpBtn">🏳️ Give up</button>
+      </div>
+
+      <div class="result" id="wordleResult">
+        <div class="result-inner">
+          <img class="result-sticker" id="wordleSticker" src="stickers/mindblow-removebg-preview.png" alt="" loading="lazy">
+          <div class="case-rarity-tag epic" id="wordleTag">CHAT WINS</div>
+          <div class="ship-name" id="wordleAnswer"
+            style="font-size:clamp(20px,4.6vw,30px); color:var(--gold); letter-spacing:4px;">?????</div>
+          <div class="status-desc" id="wordleLine">&nbsp;</div>
+          <button class="again-btn" id="wordleNextBtn">▶ Next Word</button>
+        </div>
+      </div>
+
+      <div class="quiz-board">
+        <div class="history-head">
+          <h3 class="pixel history-title">WORDLE MASTERS</h3>
+          <button class="ghost-btn" id="wordleReset">Reset scores</button>
+        </div>
+        <ol class="quiz-lb" id="wordleLb"></ol>
+      </div>
+    </div>
+
     <section class="history-section" id="historySection">
       <div class="history-head">
         <h3 class="pixel history-title">RECENT CHAOS</h3>
@@ -2761,6 +3318,7 @@
     </footer>
   </div>
 
+  <script src="wordle-words.js"></script>
   <script>
     (function () {
       "use strict";
@@ -3318,6 +3876,11 @@
           const mode = tab.dataset.mode;
           modeTabs.forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
           modePanels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + mode));
+          // the card grid is tall on phones, so bring the chosen game into view if it starts off-screen
+          const panel = document.getElementById('panel-' + mode);
+          if (panel && panel.getBoundingClientRect().top > window.innerHeight * 0.75) {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         });
       });
 
@@ -3426,6 +3989,7 @@
           if (names.length === 0) { sfxSad(); return; }
           wheelSpinning = true;
           spinBtn.disabled = true;
+          wheelNamesEl.readOnly = true; // the slices must not change while the wheel is moving
           wheelResult.classList.remove('show');
           sfxWhoosh();
 
@@ -3433,7 +3997,8 @@
           const winnerIdx = Math.floor(Math.random() * names.length);
           // pointer is at top (-PI/2). We want winnerIdx's slice center to land there.
           const targetAngle = -Math.PI / 2 - (winnerIdx * slice + slice / 2);
-          const extraSpins = 6 + Math.random() * 2;
+          // whole turns only — a fractional spin count would shift the landing slice away from winnerIdx
+          const extraSpins = 6 + Math.floor(Math.random() * 3);
           const TAU = Math.PI * 2;
           const forwardDelta = ((targetAngle - wheelRotation) % TAU + TAU) % TAU;
           const finalRotation = wheelRotation + extraSpins * TAU + forwardDelta;
@@ -3459,7 +4024,10 @@
             } else {
               wheelSpinning = false;
               spinBtn.disabled = false;
-              const winner = names[winnerIdx];
+              wheelNamesEl.readOnly = false;
+              // read the winner from where the wheel actually stopped under the pointer (top = -PI/2)
+              const landed = ((-Math.PI / 2 - wheelRotation) % TAU + TAU) % TAU;
+              const winner = names[Math.floor(landed / slice) % names.length];
               wheelWinner.textContent = winner.toUpperCase() + ' 🦇';
               if (wheelSticker) {
                 wheelSticker.src = 'stickers/' + pick(WHEEL_WINNER_STICKERS);
@@ -4520,7 +5088,109 @@
         chatLinkDot.classList.toggle('warn', !chatConnected);
         const n = activeChatters().length;
         chatLinkText.textContent = chatConnected ? '💬 ' + n + ' CHATTER' + (n === 1 ? '' : 'S') : 'CHAT RECONNECTING…';
+        renderChatPanelStatus();
       }
+
+      /* ---- live chat panel ---- */
+      const chatPanel = document.getElementById('chatPanel');
+      const cpList = document.getElementById('cpList');
+      const cpEmpty = document.getElementById('cpEmpty');
+      const cpMore = document.getElementById('cpMore');
+      const cpDot = document.getElementById('cpDot');
+      const chatLinkEl = document.getElementById('chatLink');
+      const CHAT_PANEL_KEY = 'batcyChatPanelOpen';
+      const CHAT_PANEL_MAX_LINES = 150;
+      const CHAT_EMOTE_RE = /\[emote:(\d+):([^\]]*)\]/g;
+      let cpStickToBottom = true;
+
+      function cpScrollToBottom() {
+        cpList.scrollTop = cpList.scrollHeight;
+        cpStickToBottom = true;
+        cpMore.hidden = true;
+      }
+
+      function setChatPanel(open) {
+        chatPanel.hidden = !open;
+        document.body.classList.toggle('chat-open', open);
+        chatLinkEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+        try { localStorage.setItem(CHAT_PANEL_KEY, open ? '1' : '0'); } catch (e) { }
+        if (open) cpScrollToBottom();
+      }
+
+      function renderChatPanelStatus() {
+        cpDot.classList.toggle('on', chatConnected);
+        cpDot.classList.toggle('warn', !chatConnected);
+        cpEmpty.textContent = chatConnected ? 'Chat is quiet… say hi on kick.com/' + KICK_CHANNEL + ' 👋' : 'Connecting to chat…';
+        cpEmpty.hidden = !!cpList.querySelector('.cp-line');
+      }
+
+      // Kick sends emotes inline as [emote:ID:name]; everything else stays plain text
+      function appendChatContent(el, text) {
+        let last = 0;
+        text.replace(CHAT_EMOTE_RE, (match, id, name, at) => {
+          if (at > last) el.appendChild(document.createTextNode(text.slice(last, at)));
+          const img = document.createElement('img');
+          img.className = 'cp-emote';
+          img.src = 'https://files.kick.com/emotes/' + id + '/fullsize';
+          img.alt = name;
+          img.title = name;
+          img.loading = 'lazy';
+          el.appendChild(img);
+          last = at + match.length;
+          return match;
+        });
+        if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+      }
+
+      function renderChatLine(data) {
+        const user = data.sender.username;
+        const content = String(data.content || '');
+        const line = document.createElement('div');
+        line.className = 'cp-line';
+        if (data.id) line.dataset.id = String(data.id);
+        line.dataset.user = user.toLowerCase();
+        if (user.toLowerCase() === KICK_CHANNEL) line.classList.add('host');
+        if (/^!\w/.test(content.trim())) line.classList.add('cmd');
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'cp-name';
+        const color = data.sender.identity && data.sender.identity.color;
+        nameEl.style.color = /^#[0-9a-f]{6}$/i.test(color || '') ? color : 'var(--violet-soft)';
+        nameEl.textContent = (user.toLowerCase() === KICK_CHANNEL ? '🦇 ' : '') + user + ':';
+        const textEl = document.createElement('span');
+        textEl.className = 'cp-text';
+        appendChatContent(textEl, content);
+        line.append(nameEl, textEl);
+
+        cpList.appendChild(line);
+        cpEmpty.hidden = true;
+        const lines = cpList.querySelectorAll('.cp-line');
+        for (let i = 0; i < lines.length - CHAT_PANEL_MAX_LINES; i++) lines[i].remove();
+        if (chatPanel.hidden) return;
+        if (cpStickToBottom) cpScrollToBottom();
+        else cpMore.hidden = false;
+      }
+
+      function removeChatLines(match) {
+        cpList.querySelectorAll('.cp-line').forEach(line => { if (match(line)) line.remove(); });
+        renderChatPanelStatus();
+      }
+
+      cpList.addEventListener('scroll', () => {
+        cpStickToBottom = cpList.scrollHeight - cpList.scrollTop - cpList.clientHeight < 40;
+        if (cpStickToBottom) cpMore.hidden = true;
+      });
+      cpMore.addEventListener('click', cpScrollToBottom);
+      document.getElementById('cpClose').addEventListener('click', () => setChatPanel(false));
+      chatLinkEl.addEventListener('click', () => setChatPanel(chatPanel.hidden));
+      chatLinkEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setChatPanel(chatPanel.hidden); }
+      });
+
+      // open by default on wide screens; afterwards remember what the streamer chose
+      let cpSaved = null;
+      try { cpSaved = localStorage.getItem(CHAT_PANEL_KEY); } catch (e) { }
+      setChatPanel(cpSaved === null ? window.innerWidth >= 1100 : cpSaved === '1');
       setInterval(renderChatLink, 30000);
 
       async function resolveChatroomId() {
@@ -4556,10 +5226,23 @@
             renderQuizFeed();
           } else if (msg.event === 'pusher:ping') {
             ws.send(JSON.stringify({ event: 'pusher:pong', data: {} }));
-          } else if (msg.event === 'App\\Events\\ChatMessageEvent') {
+          } else if (msg.event && msg.event.indexOf('App\\Events\\') === 0) {
             let data;
             try { data = JSON.parse(msg.data); } catch (err) { return; }
-            if (data && data.sender && data.sender.username) handleChatMessage(data.sender.username, String(data.content || ''));
+            if (!data) return;
+            if (msg.event === 'App\\Events\\ChatMessageEvent') {
+              if (!data.sender || !data.sender.username) return;
+              renderChatLine(data);
+              handleChatMessage(data.sender.username, String(data.content || ''));
+            } else if (msg.event === 'App\\Events\\MessageDeletedEvent') {
+              const id = data.message && data.message.id;
+              if (id) removeChatLines(line => line.dataset.id === String(id));
+            } else if (msg.event === 'App\\Events\\UserBannedEvent') {
+              const u = data.user && data.user.username;
+              if (u) removeChatLines(line => line.dataset.user === u.toLowerCase());
+            } else if (msg.event === 'App\\Events\\ChatroomClearEvent') {
+              removeChatLines(() => true);
+            }
           }
         };
         ws.onerror = () => ws.close();
@@ -4581,6 +5264,7 @@
         const content = text.trim();
         if (quizState === 'running') handleQuizVote(name, content);
         if (royaleState === 'round') royaleInput(name, content);
+        if (wordleState === 'playing') wordleGuess(name, content);
         if (content[0] === '!') handleChatCommand(name, content);
       }
 
@@ -4607,6 +5291,7 @@
       }
 
       function addWheelNames(inst, names) {
+        if (inst.querySelector('.spinBtn').disabled) return 0; // mid-spin
         const ta = inst.querySelector('.wheelNames');
         const current = ta.value.split('\n').map(s => s.trim()).filter(Boolean);
         const seen = new Set(current.map(s => s.toLowerCase()));
@@ -5149,6 +5834,299 @@
       renderRoyaleStats();
       renderRoyaleWins();
       setRoyaleControls();
+
+      /* ============ CHAT WORDLE (chat guesses 5-letter words live) ============ */
+      const WORDLE_ANSWERS = window.WORDLE_ANSWERS || ['crane', 'ghost', 'pixel', 'chaos', 'night'];
+      const WORDLE_VALID = new Set();
+      for (let i = 0, s = window.WORDLE_VALID || ''; i < s.length; i += 5) WORDLE_VALID.add(s.slice(i, i + 5));
+      WORDLE_ANSWERS.forEach(w => WORDLE_VALID.add(w));
+      const WORDLE_COOLDOWN_MS = 5000;
+      const WORDLE_WIN_MAX = 100;
+      const WORDLE_WIN_MIN = 30;
+      const WORDLE_WIN_STEP = 3;   // win value drops per guess already made
+      const WORDLE_HINT_COST = 15; // win value drops per hint
+      const WORDLE_GREEN_BONUS = 10;
+      const WORDLE_LETTER_BONUS = 5;
+      const WORDLE_MAX_ROWS = 60;
+      const WORDLE_SCORES_KEY = 'batcyWordleScores';
+      const WORDLE_KB_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+      const WORDLE_MARK_RANK = { x: 1, y: 2, g: 3 };
+
+      const wordleBoard = document.getElementById('wordleBoard');
+      const wordleKnown = document.getElementById('wordleKnown');
+      const wordleKb = document.getElementById('wordleKb');
+      const wordleFeed = document.getElementById('wordleFeed');
+      const wordleIdle = document.getElementById('wordleIdle');
+      const wordleLive = document.getElementById('wordleLive');
+      const wordleResult = document.getElementById('wordleResult');
+      const wordleHintBtn = document.getElementById('wordleHintBtn');
+      const wordleLb = document.getElementById('wordleLb');
+
+      let wordleState = 'idle'; // idle | playing | done
+      let wordleSecret = '';
+      let wordleRoundNo = 0;
+      let wordleGuesses = [];
+      let wordleTried = new Set();
+      let wordleLastGuessAt = new Map();
+      let wordlePlayers = new Set();
+      let wordleKeys = {};
+      let wordleGreens = [null, null, null, null, null];
+      let wordleHintSlots = new Set();
+      let wordleFound = new Set();
+      let wordleHints = 0;
+      let wordleBag = [];
+
+      function loadWordleScores() {
+        try { return JSON.parse(localStorage.getItem(WORDLE_SCORES_KEY)) || {}; } catch (e) { return {}; }
+      }
+      let wordleScores = loadWordleScores();
+      function addWordlePoints(name, pts) {
+        wordleScores[name] = (wordleScores[name] || 0) + pts;
+        try { localStorage.setItem(WORDLE_SCORES_KEY, JSON.stringify(wordleScores)); } catch (e) { }
+      }
+      function renderWordleScores() {
+        const ranked = Object.entries(wordleScores).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        if (!ranked.length) {
+          wordleLb.innerHTML = '<li class="quiz-lb-empty">No Wordle masters yet. Chat, start guessing.</li>';
+          return;
+        }
+        const medals = ['👑', '🥈', '🥉'];
+        wordleLb.innerHTML = ranked.map(([name, pts], i) =>
+          '<li><span class="lb-rank">' + (medals[i] || '#' + (i + 1)) + '</span><span class="lb-name">' + escapeHtml(name) +
+          '</span><span class="lb-pts">' + pts + '</span></li>').join('');
+      }
+
+      // standard Wordle marking: greens first, then yellows limited by how many of that letter are left
+      function scoreWordle(guess, secret) {
+        const marks = ['x', 'x', 'x', 'x', 'x'];
+        const left = {};
+        for (let i = 0; i < 5; i++) {
+          if (guess[i] === secret[i]) marks[i] = 'g';
+          else left[secret[i]] = (left[secret[i]] || 0) + 1;
+        }
+        for (let i = 0; i < 5; i++) {
+          if (marks[i] !== 'g' && left[guess[i]] > 0) { marks[i] = 'y'; left[guess[i]]--; }
+        }
+        return marks;
+      }
+
+      function nextWordleSecret() {
+        if (!wordleBag.length) wordleBag = WORDLE_ANSWERS.slice().sort(() => Math.random() - 0.5);
+        return wordleBag.pop();
+      }
+
+      function renderWordleKnown() {
+        wordleKnown.innerHTML = '';
+        wordleGreens.forEach((ch, i) => {
+          const t = document.createElement('div');
+          t.className = 'wk-tile' + (ch ? ' g' : '') + (wordleHintSlots.has(i) ? ' hint' : '');
+          t.textContent = ch ? ch.toUpperCase() : '?';
+          wordleKnown.appendChild(t);
+        });
+      }
+
+      function renderWordleKb() {
+        wordleKb.innerHTML = WORDLE_KB_ROWS.map(row =>
+          '<div class="wkb-row">' + row.split('').map(ch =>
+            '<div class="wkb ' + (wordleKeys[ch] || '') + '">' + ch.toUpperCase() + '</div>').join('') + '</div>').join('');
+      }
+
+      function renderWordleStats() {
+        document.getElementById('wordleNum').textContent = wordleRoundNo || '–';
+        document.getElementById('wordleCount').textContent = wordleGuesses.length;
+        document.getElementById('wordlePlayers').textContent = wordlePlayers.size;
+      }
+
+      function setWordleFeed(text) { wordleFeed.textContent = text; }
+
+      function setWordleControls() {
+        wordleIdle.hidden = wordleState === 'playing' || wordleState === 'done';
+        wordleLive.hidden = wordleState !== 'playing';
+        wordleHintBtn.disabled = wordleGreens.filter(Boolean).length >= 4;
+      }
+
+      function addWordleRow(guess, marks, name, win) {
+        const empty = wordleBoard.querySelector('.wordle-empty');
+        if (empty) empty.remove();
+        const row = document.createElement('div');
+        row.className = 'wr' + (win ? ' win' : '');
+        const tiles = document.createElement('div');
+        tiles.className = 'wr-tiles';
+        for (let i = 0; i < 5; i++) {
+          const t = document.createElement('div');
+          t.className = 'wt ' + marks[i];
+          t.style.setProperty('--i', i);
+          t.textContent = guess[i].toUpperCase();
+          tiles.appendChild(t);
+        }
+        const who = document.createElement('div');
+        who.className = 'wr-name';
+        who.textContent = (win ? '👑 ' : '') + name;
+        row.append(tiles, who);
+        wordleBoard.appendChild(row);
+        const rows = wordleBoard.querySelectorAll('.wr');
+        if (rows.length > WORDLE_MAX_ROWS) rows[0].remove();
+        wordleBoard.scrollTop = wordleBoard.scrollHeight;
+      }
+
+      function resetWordleBoardUi() {
+        wordleBoard.innerHTML = '<div class="wordle-empty">' +
+          (wordleState === 'playing' ? 'Waiting for the first guess… chat, type a 5-letter word!' : 'Hit NEW WORD to start a round') + '</div>';
+      }
+
+      function startWordle() {
+        ensureAudio();
+        if (wordleState === 'playing') return;
+        sfxClick(); sfxWhoosh();
+        wordleSecret = nextWordleSecret();
+        wordleRoundNo++;
+        wordleGuesses = [];
+        wordleTried = new Set();
+        wordleLastGuessAt = new Map();
+        wordlePlayers = new Set();
+        wordleKeys = {};
+        wordleGreens = [null, null, null, null, null];
+        wordleHintSlots = new Set();
+        wordleFound = new Set();
+        wordleHints = 0;
+        wordleState = 'playing';
+        wordleResult.classList.remove('show');
+        resetWordleBoardUi();
+        renderWordleKnown();
+        renderWordleKb();
+        renderWordleStats();
+        setWordleControls();
+        setWordleFeed(chatConnected
+          ? '💬 Type any real 5-letter word in chat · one guess every ' + (WORDLE_COOLDOWN_MS / 1000) + 's per chatter'
+          : '⚠️ Chat isn\'t connected yet — guesses will show up once it is.');
+        wordleBoard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      function wordleWinValue() {
+        return Math.max(WORDLE_WIN_MIN, WORDLE_WIN_MAX - WORDLE_WIN_STEP * (wordleGuesses.length - 1) - WORDLE_HINT_COST * wordleHints);
+      }
+
+      function wordleGuess(name, content) {
+        const guess = content.trim().toLowerCase();
+        if (!/^[a-z]{5}$/.test(guess) || !WORDLE_VALID.has(guess) || wordleTried.has(guess)) return;
+        const key = name.toLowerCase();
+        const now = Date.now();
+        if (now - (wordleLastGuessAt.get(key) || 0) < WORDLE_COOLDOWN_MS) return;
+        wordleLastGuessAt.set(key, now);
+        wordleTried.add(guess);
+        wordlePlayers.add(key);
+
+        const marks = scoreWordle(guess, wordleSecret);
+        wordleGuesses.push({ guess, marks, name });
+
+        // discovery bonus: new green positions and letters nobody had found yet
+        let bonus = 0;
+        const found = [];
+        marks.forEach((m, i) => {
+          const ch = guess[i];
+          if (m === 'g' && !wordleGreens[i]) { wordleGreens[i] = ch; wordleHintSlots.delete(i); bonus += WORDLE_GREEN_BONUS; }
+          if ((m === 'g' || m === 'y') && !wordleFound.has(ch)) { wordleFound.add(ch); bonus += WORDLE_LETTER_BONUS; found.push(ch.toUpperCase()); }
+          if ((WORDLE_MARK_RANK[m] || 0) > (WORDLE_MARK_RANK[wordleKeys[ch]] || 0)) wordleKeys[ch] = m;
+        });
+
+        const win = guess === wordleSecret;
+        addWordleRow(guess, marks, name, win);
+        renderWordleKnown();
+        renderWordleKb();
+        renderWordleStats();
+
+        if (win) { finishWordle(name); return; }
+        if (bonus) {
+          addWordlePoints(name, bonus);
+          renderWordleScores();
+          setWordleFeed('✨ ' + name + ' found ' + (found.length ? found.join(', ') : 'a new green spot') + ' (+' + bonus + ')');
+          tone(880, 0.06, 'sine', 0, 0.04);
+          tone(1320, 0.08, 'sine', 0.05, 0.03);
+        } else {
+          tone(300, 0.04, 'square', 0, 0.025);
+        }
+        setWordleControls();
+      }
+
+      function finishWordle(winner) {
+        wordleState = 'done';
+        setWordleControls();
+        const sticker = document.getElementById('wordleSticker');
+        const tag = document.getElementById('wordleTag');
+        document.getElementById('wordleAnswer').textContent = wordleSecret.toUpperCase();
+        if (winner) {
+          const pts = wordleWinValue();
+          addWordlePoints(winner, pts);
+          tag.textContent = winner.toUpperCase() + ' +' + pts;
+          tag.className = 'case-rarity-tag epic';
+          document.getElementById('wordleLine').textContent = winner + ' cracked it on guess #' + wordleGuesses.length + '. ' +
+            wordlePlayers.size + ' chatter' + (wordlePlayers.size === 1 ? '' : 's') + ' played' + (wordleHints ? ', with ' + wordleHints + ' hint' + (wordleHints === 1 ? '' : 's') : '') + '.';
+          sticker.src = 'stickers/' + pick(['mindblow-removebg-preview.png', 'gg-removebg-preview.png', 'hype-removebg-preview.png']);
+          setWordleFeed('🏆 ' + winner + ' solved it!');
+          sfxFanfare();
+          const rect = wordleBoard.getBoundingClientRect();
+          burst(window.innerWidth / 2, rect.top + rect.height / 2, 60, 'bat');
+          logHistory('🟩', '<b>' + escapeHtml(winner) + '</b> solved Wordle <b>' + wordleSecret.toUpperCase() + '</b> (+' + pts + ', guess #' + wordleGuesses.length + ')');
+        } else {
+          tag.textContent = 'BATCY WINS';
+          tag.className = 'case-rarity-tag legendary';
+          document.getElementById('wordleLine').textContent = 'Chat gave up after ' + wordleGuesses.length + ' guess' + (wordleGuesses.length === 1 ? '' : 'es') + '. The bat keeps its secrets. 🦇';
+          sticker.src = 'stickers/' + pick(['diss-removebg-preview.png', 'sip-removebg-preview.png', 'rich-removebg-preview.png']);
+          setWordleFeed('🏳️ Round over — the word was ' + wordleSecret.toUpperCase());
+          sfxSad();
+          logHistory('🏳️', 'Nobody solved Wordle &mdash; it was <b>' + wordleSecret.toUpperCase() + '</b>');
+        }
+        sticker.style.animation = 'none';
+        void sticker.offsetWidth;
+        sticker.style.animation = '';
+        renderWordleScores();
+        wordleResult.classList.add('show');
+        setTimeout(() => wordleResult.scrollIntoView({ behavior: 'smooth', block: 'center' }), 700);
+      }
+
+      document.getElementById('wordleStartBtn').addEventListener('click', (evt) => { rippleAt(evt.currentTarget, evt); startWordle(); });
+      document.getElementById('wordleNextBtn').addEventListener('click', () => { wordleState = 'idle'; startWordle(); });
+
+      wordleHintBtn.addEventListener('click', () => {
+        ensureAudio();
+        if (wordleState !== 'playing') return;
+        const open = [0, 1, 2, 3, 4].filter(i => !wordleGreens[i]);
+        if (open.length <= 1) return; // never give away the whole word
+        const i = pick(open);
+        wordleGreens[i] = wordleSecret[i];
+        wordleHintSlots.add(i);
+        wordleHints++;
+        if ((WORDLE_MARK_RANK.g) > (WORDLE_MARK_RANK[wordleKeys[wordleSecret[i]]] || 0)) wordleKeys[wordleSecret[i]] = 'g';
+        wordleFound.add(wordleSecret[i]);
+        renderWordleKnown();
+        renderWordleKb();
+        setWordleControls();
+        setWordleFeed('💡 Batcy revealed letter #' + (i + 1) + ' — the win is now worth ' + wordleWinValue() + ' pts');
+        sfxChime();
+      });
+
+      document.getElementById('wordleGiveUpBtn').addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        if (wordleState !== 'playing') return;
+        if (!confirm('Give up and reveal the word?')) return;
+        finishWordle(null);
+      });
+
+      document.getElementById('wordleReset').addEventListener('click', () => {
+        ensureAudio(); sfxClick();
+        if (!confirm('Reset all Wordle scores?')) return;
+        wordleScores = {};
+        try { localStorage.setItem(WORDLE_SCORES_KEY, '{}'); } catch (e) { }
+        renderWordleScores();
+      });
+
+      resetWordleBoardUi();
+      renderWordleKnown();
+      renderWordleKb();
+      renderWordleStats();
+      renderWordleScores();
+      setWordleControls();
+      setWordleFeed('');
 
       /* hook history logging into the existing matchmaker result */
       matchBtn.addEventListener('click', () => {
